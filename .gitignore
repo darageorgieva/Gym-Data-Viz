@@ -1,0 +1,9 @@
+# NPM packages
+node_modules/
+# NPM cache
+.npm
+package-lock.json
+# Environment variables 
+.env
+.env.local/
+
