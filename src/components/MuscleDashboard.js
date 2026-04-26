@@ -5,6 +5,7 @@ import {
 } from 'recharts';
 import { MUSCLE_CONFIG, APP_COLORS } from '../config';
 import TrainingHeatmap from './TrainingHeatmap';
+import { useIsMobile } from '../useIsMobile';
 
 const cardStyle = {
   background: APP_COLORS.cardBackground,
@@ -59,6 +60,7 @@ const CustomTooltip = ({ active, payload, label, color }) => {
 };
 
 export default function MuscleDashboard({ muscle, sessions, volumeData, muscleDates, onBack }) {
+  const isMobile = useIsMobile();
   const config = MUSCLE_CONFIG[muscle];
   const { color, colorLight, exercise, label } = config;
 
@@ -81,7 +83,7 @@ export default function MuscleDashboard({ muscle, sessions, volumeData, muscleDa
       {/* Header */}
       <div style={{
         background: color,
-        padding: '28px 40px 24px',
+        padding: isMobile ? '16px 16px 14px' : '28px 40px 24px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -106,15 +108,15 @@ export default function MuscleDashboard({ muscle, sessions, volumeData, muscleDa
         </button>
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: '13px', fontWeight: '600', opacity: 0.7, letterSpacing: '0.08em', textTransform: 'uppercase' }}>{exercise}</div>
-          <div style={{ fontSize: '32px', fontWeight: '800', color: '#1C1917' }}>{label}</div>
+          <div style={{ fontSize: isMobile ? '22px' : '32px', fontWeight: '800', color: '#1C1917' }}>{label}</div>
         </div>
         <div style={{ width: '80px' }} />
       </div>
 
-      <div style={{ padding: '28px 32px', maxWidth: '900px', margin: '0 auto' }}>
+      <div style={{ padding: isMobile ? '16px 12px' : '28px 32px', maxWidth: '900px', margin: '0 auto' }}>
 
         {/* Stats row */}
-        <div style={{ display: 'flex', gap: '16px', marginBottom: '20px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '16px', marginBottom: '20px' }}>
           <PRBadge value={pr} color={color} />
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flex: 1 }}>
             <div style={{ ...cardStyle, marginBottom: 0, display: 'flex', gap: '24px', alignItems: 'center' }}>

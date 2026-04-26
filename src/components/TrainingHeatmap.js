@@ -67,6 +67,7 @@ export default function TrainingHeatmap({ muscleDates, color, colorLight }) {
           {trainedCount} sessions · ~{frequency}x/week
         </span>
       </div>
+      <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
       <svg width={svgWidth} height={svgHeight}>
         {/* Month labels */}
         {monthLabels.map(({ x, month }) => (
@@ -96,6 +97,7 @@ export default function TrainingHeatmap({ muscleDates, color, colorLight }) {
           ))
         )}
       </svg>
+      </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
         <span style={{ fontSize: '11px', color: '#78716C' }}>Less</span>
         {[colorLight, color].map((c, i) => (

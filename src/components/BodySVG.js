@@ -62,6 +62,7 @@ export default function BodySVG({ onMuscleClick }) {
   const [svgMarkup, setSvgMarkup] = useState('');
   const [loadError, setLoadError] = useState(null);
   const [hoveredRegion, setHoveredRegion] = useState(null);
+  const containerRef = React.useRef(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -84,6 +85,16 @@ export default function BodySVG({ onMuscleClick }) {
       cancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    if (!svgMarkup || !containerRef.current) return;
+    const svgEl = containerRef.current.querySelector('svg');
+    if (svgEl) {
+      svgEl.setAttribute('viewBox', '0 68 210 165');
+      svgEl.removeAttribute('width');
+      svgEl.removeAttribute('height');
+    }
+  }, [svgMarkup]);
 
   const hoveredMuscle = hoveredRegion ? getMuscleForRegion(hoveredRegion) : null;
   const hoveredConfig = hoveredMuscle ? MUSCLE_CONFIG[hoveredMuscle] : null;
@@ -141,7 +152,7 @@ export default function BodySVG({ onMuscleClick }) {
     <div
       style={{
         position: 'relative',
-        width: 'min(760px, 100%)',
+        width: 'min(920px, 100%)',
         display: 'flex',
         justifyContent: 'center',
       }}
@@ -151,7 +162,7 @@ export default function BodySVG({ onMuscleClick }) {
           display: block;
           width: 100%;
           height: auto;
-          max-height: 620px;
+          max-height: 760px;
         }
 
         .body-model-svg #Reference {
@@ -174,6 +185,7 @@ export default function BodySVG({ onMuscleClick }) {
       `}</style>
 
       <div
+        ref={containerRef}
         className="body-model-svg"
         onMouseMove={handleMouseMove}
         onMouseLeave={clearHover}

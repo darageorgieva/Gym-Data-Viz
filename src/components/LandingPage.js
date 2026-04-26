@@ -1,8 +1,11 @@
 import React from 'react';
 import BodySVG from './BodySVG';
 import { MUSCLE_CONFIG, APP_COLORS } from '../config';
+import { useIsMobile } from '../useIsMobile';
 
 export default function LandingPage({ onMuscleClick }) {
+  const isMobile = useIsMobile();
+
   return (
     <div style={{
       minHeight: '100vh',
@@ -11,17 +14,17 @@ export default function LandingPage({ onMuscleClick }) {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      padding: '48px 24px 80px',
+      padding: isMobile ? '28px 16px 48px' : '48px 24px 80px',
     }}>
       {/* Title */}
       <div style={{ textAlign: 'center', marginBottom: '12px' }}>
         <div style={{ fontSize: '12px', fontWeight: '700', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#78716C', marginBottom: '8px' }}>
           Data Selfie · 6 Month Journey
         </div>
-        <h1 style={{ fontSize: '36px', fontWeight: '800', color: '#1C1917', margin: '0 0 10px' }}>
+        <h1 style={{ fontSize: isMobile ? '26px' : '36px', fontWeight: '800', color: '#1C1917', margin: '0 0 10px' }}>
           My Training Progress
         </h1>
-        <p style={{ fontSize: '15px', color: '#78716C', margin: 0, maxWidth: '420px' }}>
+        <p style={{ fontSize: '14px', color: '#78716C', margin: 0, maxWidth: '420px' }}>
           Click on a muscle to explore your 6-month progression, consistency, and intensity data.
         </p>
       </div>
