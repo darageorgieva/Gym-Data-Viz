@@ -1,8 +1,9 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import LandingPage from './components/LandingPage';
 import MuscleDashboard from './components/MuscleDashboard';
 import { MUSCLE_CONFIG } from './config';
 import { useGymData } from './useGymData';
+import { createMuscleTimeSeries } from './utils/muscleProgress';
 
 function getMuscleFromUrl() {
   const params = new URLSearchParams(window.location.search);
@@ -26,7 +27,12 @@ function getUrlForMuscle(muscle) {
 export default function App() {
   const [selectedMuscle, setSelectedMuscle] = useState(getMuscleFromUrl);
   const hasInAppHistoryRef = useRef(false);
-  const { loading, getSessionsForMuscle, getVolumeBySession, getMuscleDates } = useGymData();
+  const { data, loading, getSessionsForMuscle, getVolumeBySession, getMuscleDates } = useGymData();
+
+  const { muscleTimeSeries, weekLabels } = useMemo(
+    () => createMuscleTimeSeries(data),
+    [data]
+  );
 
   useEffect(() => {
     window.history.replaceState({ muscle: getMuscleFromUrl() }, '', getUrlForMuscle(getMuscleFromUrl()));
@@ -91,5 +97,11 @@ export default function App() {
     );
   }
 
-  return <LandingPage onMuscleClick={(muscle) => navigateToMuscle(muscle)} />;
+  return (
+    <LandingPage
+      onMuscleClick={(muscle) => navigateToMuscle(muscle)}
+      muscleTimeSeries={muscleTimeSeries}
+      weekLabels={weekLabels}
+    />
+  );
 }

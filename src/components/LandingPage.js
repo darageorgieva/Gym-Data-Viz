@@ -1,9 +1,9 @@
 import React from 'react';
-import BodySVG from './BodySVG';
-import { MUSCLE_CONFIG, APP_COLORS } from '../config';
+import { APP_COLORS } from '../config';
 import { useIsMobile } from '../useIsMobile';
+import BodyHeatmap from './BodyHeatmap';
 
-export default function LandingPage({ onMuscleClick }) {
+export default function LandingPage({ onMuscleClick, muscleTimeSeries, weekLabels }) {
   const isMobile = useIsMobile();
 
   return (
@@ -25,53 +25,15 @@ export default function LandingPage({ onMuscleClick }) {
           My Training Progress
         </h1>
         <p style={{ fontSize: '14px', color: '#78716C', margin: 0, maxWidth: '420px' }}>
-          Click on a muscle to explore your 6-month progression, consistency, and intensity data.
+          Move through the year to see how 4-week rolling volume changed against each muscle's first 4-week baseline.
         </p>
       </div>
 
-      {/* Muscle legend */}
-      <div style={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: '8px',
-        justifyContent: 'center',
-        maxWidth: '520px',
-        marginBottom: '36px',
-      }}>
-        {Object.entries(MUSCLE_CONFIG).map(([muscle, config]) => (
-          <button
-            key={muscle}
-            onClick={() => onMuscleClick(muscle)}
-            style={{
-              background: config.colorLight,
-              border: `1.5px solid ${config.color}`,
-              borderRadius: '20px',
-              padding: '5px 14px',
-              fontSize: '12px',
-              fontWeight: '600',
-              color: '#1C1917',
-              cursor: 'pointer',
-              transition: 'all 0.15s ease',
-            }}
-            onMouseEnter={e => {
-              e.target.style.background = config.color;
-            }}
-            onMouseLeave={e => {
-              e.target.style.background = config.colorLight;
-            }}
-          >
-            {muscle}
-          </button>
-        ))}
-      </div>
-
-      {/* Body SVG */}
-      <BodySVG onMuscleClick={onMuscleClick} />
-
-      {/* Footer hint */}
-      <p style={{ marginTop: '40px', fontSize: '13px', color: '#A8A29E', textAlign: 'center' }}>
-        Hover to preview · Click to explore
-      </p>
+      <BodyHeatmap
+        muscleTimeSeries={muscleTimeSeries}
+        weekLabels={weekLabels}
+        onMuscleSelect={onMuscleClick}
+      />
     </div>
   );
 }

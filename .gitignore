@@ -1,3 +1,5 @@
+# folders
+/build
 # NPM packages
 node_modules/
 # NPM cache
