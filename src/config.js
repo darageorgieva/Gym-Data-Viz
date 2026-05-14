@@ -73,6 +73,23 @@ export const MUSCLE_CONFIG = {
   },
 };
 
+const BASE_WEIGHT_URL = 'https://flo.uri.sh/visualisation/28962149/embed';
+
+export const FLOURISH_URLS = {
+  Shoulders:    { weight: `${BASE_WEIGHT_URL}#muscle=Shoulder+Press`,       heatmap: null, rir: null, volume: null, rpe: null },
+  Chest:        { weight: `${BASE_WEIGHT_URL}#muscle=Pec+Deck`,             heatmap: null, rir: null, volume: null, rpe: null },
+  Biceps:       { weight: `${BASE_WEIGHT_URL}#muscle=Dumbbell+Curl`,        heatmap: null, rir: null, volume: null, rpe: null },
+  Abs:          { weight: `${BASE_WEIGHT_URL}#muscle=Cable+Crunch`,         heatmap: null, rir: null, volume: null, rpe: null },
+  Quads:        { weight: `${BASE_WEIGHT_URL}#muscle=Leg+Extension`,        heatmap: null, rir: null, volume: null, rpe: null },
+  Triceps:      { weight: `${BASE_WEIGHT_URL}#muscle=Tricep+Pushdown`,      heatmap: null, rir: null, volume: null, rpe: null },
+  Traps:        { weight: `${BASE_WEIGHT_URL}#muscle=Chest+Supported+Row`,  heatmap: null, rir: null, volume: null, rpe: null },
+  Lats:         { weight: `${BASE_WEIGHT_URL}#muscle=Lat+Pulldown`,         heatmap: null, rir: null, volume: null, rpe: null },
+  'Rear Delts': { weight: `${BASE_WEIGHT_URL}#muscle=Rear+Delt+Pec+Deck`,  heatmap: null, rir: null, volume: null, rpe: null },
+  Glutes:       { weight: `${BASE_WEIGHT_URL}#muscle=Hip+Thrust`,           heatmap: null, rir: null, volume: null, rpe: null },
+  Hamstrings:   { weight: `${BASE_WEIGHT_URL}#muscle=Seated+Leg+Curl`,      heatmap: null, rir: null, volume: null, rpe: null },
+  Calves:       { weight: `${BASE_WEIGHT_URL}#muscle=Calf+Raise`,           heatmap: null, rir: null, volume: null, rpe: null },
+};
+
 export const APP_COLORS = {
   background: '#FAFAF7',
   cardBackground: '#F0EDE8',

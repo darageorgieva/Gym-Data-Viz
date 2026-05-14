@@ -1,10 +1,5 @@
 import React, { useMemo } from 'react';
-import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  BarChart, Bar, ReferenceLine,
-} from 'recharts';
-import { MUSCLE_CONFIG, APP_COLORS } from '../config';
-import TrainingHeatmap from './TrainingHeatmap';
+import { MUSCLE_CONFIG, APP_COLORS, FLOURISH_URLS } from '../config';
 import { useIsMobile } from '../useIsMobile';
 
 const cardStyle = {
@@ -32,46 +27,35 @@ function PRBadge({ value, color }) {
   );
 }
 
-function formatDate(dateStr) {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+function ChartCard({ title, url }) {
+  return (
+    <div style={cardStyle}>
+      <h3 style={{ margin: '0 0 16px', fontSize: '15px', fontWeight: '600', color: '#1C1917' }}>{title}</h3>
+      {url ? (
+        <iframe
+          src={url}
+          style={{ width: '100%', height: '450px', border: 'none', display: 'block' }}
+          allowFullScreen
+          title={title}
+        />
+      ) : (
+        <div style={{ height: '450px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <span style={{ fontSize: '14px', color: APP_COLORS.textLight }}>Visualization coming soon</span>
+        </div>
+      )}
+    </div>
+  );
 }
 
-const CustomTooltip = ({ active, payload, label, color }) => {
-  if (active && payload && payload.length) {
-    return (
-      <div style={{
-        background: '#fff',
-        border: `1.5px solid ${color}`,
-        borderRadius: '10px',
-        padding: '10px 16px',
-        fontSize: '13px',
-        color: '#1C1917',
-        boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
-      }}>
-        <div style={{ fontWeight: '600', marginBottom: '4px' }}>{formatDate(label)}</div>
-        {payload.map((p, i) => (
-          <div key={i}>{p.name}: <strong>{p.value}{p.unit || ''}</strong></div>
-        ))}
-      </div>
-    );
-  }
-  return null;
-};
-
-export default function MuscleDashboard({ muscle, sessions, volumeData, muscleDates, onBack }) {
+export default function MuscleDashboard({ muscle, sessions, onBack }) {
   const isMobile = useIsMobile();
   const config = MUSCLE_CONFIG[muscle];
   const { color, colorLight, exercise, label } = config;
+  const urls = FLOURISH_URLS[muscle] || {};
 
   const pr = useMemo(() => Math.max(...sessions.map(s => s.weight_kg)), [sessions]);
   const startWeight = sessions[0]?.weight_kg || 0;
   const totalGain = pr - startWeight;
-
-  // Thin out x-axis labels
-  const tickCount = 6;
-  const step = Math.floor(sessions.length / tickCount);
-  const ticks = sessions.filter((_, i) => i % step === 0).map(s => s.date);
 
   return (
     <div style={{
@@ -137,98 +121,11 @@ export default function MuscleDashboard({ muscle, sessions, volumeData, muscleDa
           </div>
         </div>
 
-        {/* Weight Progression */}
-        <div style={cardStyle}>
-          <h3 style={{ margin: '0 0 16px', fontSize: '15px', fontWeight: '600', color: '#1C1917' }}>Weight Progression</h3>
-          <ResponsiveContainer width="100%" height={220}>
-            <LineChart data={sessions} margin={{ top: 4, right: 8, bottom: 4, left: -10 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={APP_COLORS.border} vertical={false} />
-              <XAxis dataKey="date" tickFormatter={formatDate} ticks={ticks} tick={{ fontSize: 11, fill: '#78716C' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: '#78716C' }} axisLine={false} tickLine={false} domain={['auto', 'auto']} unit="kg" />
-              <Tooltip content={<CustomTooltip color={color} />} />
-              <Line type="monotone" dataKey="weight_kg" stroke={color} strokeWidth={2.5} dot={false} activeDot={{ r: 5, fill: color }} name="Weight" unit="kg" />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Heatmap */}
-        <div style={cardStyle}>
-          <TrainingHeatmap muscleDates={muscleDates} color={color} colorLight={colorLight} />
-        </div>
-
-        {/* Volume */}
-        <div style={cardStyle}>
-          <h3 style={{ margin: '0 0 16px', fontSize: '15px', fontWeight: '600', color: '#1C1917' }}>
-            Training Volume
-            <span style={{ fontSize: '12px', fontWeight: '400', color: '#78716C', marginLeft: '8px' }}>weight × reps per session</span>
-          </h3>
-          <ResponsiveContainer width="100%" height={180}>
-            <BarChart data={volumeData} margin={{ top: 4, right: 8, bottom: 4, left: -10 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={APP_COLORS.border} vertical={false} />
-              <XAxis dataKey="date" tickFormatter={formatDate} ticks={ticks} tick={{ fontSize: 11, fill: '#78716C' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: '#78716C' }} axisLine={false} tickLine={false} />
-              <Tooltip content={<CustomTooltip color={color} />} />
-              <Bar dataKey="volume" fill={colorLight} stroke={color} strokeWidth={1} radius={[4, 4, 0, 0]} name="Volume" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* RIR Progression — Premium */}
-        <div style={cardStyle}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-            <h3 style={{ margin: 0, fontSize: '15px', fontWeight: '600', color: '#1C1917' }}>Reps in Reserve (RIR)</h3>
-            <span style={{
-              background: color,
-              borderRadius: '8px',
-              padding: '3px 10px',
-              fontSize: '11px',
-              fontWeight: '700',
-              color: '#1C1917',
-              letterSpacing: '0.04em',
-            }}>ADVANCED</span>
-          </div>
-          <p style={{ fontSize: '12px', color: '#78716C', margin: '0 0 12px' }}>
-            How many more reps you could have done. Lower = harder effort. Approaching 0 means maximum intensity.
-          </p>
-          <ResponsiveContainer width="100%" height={180}>
-            <LineChart data={sessions} margin={{ top: 4, right: 8, bottom: 4, left: -10 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={APP_COLORS.border} vertical={false} />
-              <XAxis dataKey="date" tickFormatter={formatDate} ticks={ticks} tick={{ fontSize: 11, fill: '#78716C' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: '#78716C' }} axisLine={false} tickLine={false} domain={[0, 4]} ticks={[0,1,2,3,4]} />
-              <Tooltip content={<CustomTooltip color={color} />} />
-              <ReferenceLine y={0} stroke={color} strokeDasharray="4 4" strokeWidth={1.5} label={{ value: 'Max effort', position: 'right', fontSize: 10, fill: color }} />
-              <Line type="monotone" dataKey="rir" stroke={color} strokeWidth={2} dot={false} activeDot={{ r: 4 }} name="RIR" />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* RPE / Intensity */}
-        <div style={cardStyle}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-            <h3 style={{ margin: 0, fontSize: '15px', fontWeight: '600', color: '#1C1917' }}>Training Intensity (RPE)</h3>
-            <span style={{
-              background: color,
-              borderRadius: '8px',
-              padding: '3px 10px',
-              fontSize: '11px',
-              fontWeight: '700',
-              color: '#1C1917',
-              letterSpacing: '0.04em',
-            }}>ADVANCED</span>
-          </div>
-          <p style={{ fontSize: '12px', color: '#78716C', margin: '0 0 12px' }}>
-            Rate of Perceived Exertion on a 1–10 scale. Consistently high RPE reflects a high-intensity training approach.
-          </p>
-          <ResponsiveContainer width="100%" height={160}>
-            <BarChart data={sessions} margin={{ top: 4, right: 8, bottom: 4, left: -10 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={APP_COLORS.border} vertical={false} />
-              <XAxis dataKey="date" tickFormatter={formatDate} ticks={ticks} tick={{ fontSize: 11, fill: '#78716C' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: '#78716C' }} axisLine={false} tickLine={false} domain={[0, 10]} ticks={[0,5,10]} />
-              <Tooltip content={<CustomTooltip color={color} />} />
-              <Bar dataKey="rpe" fill={color} opacity={0.7} radius={[3, 3, 0, 0]} name="RPE" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+        <ChartCard title="Weight Progression" url={urls.weight} />
+        <ChartCard title="Training Consistency" url={urls.heatmap} />
+        <ChartCard title="Reps in Reserve (RIR)" url={urls.rir} />
+        <ChartCard title="Training Volume" url={urls.volume} />
+        <ChartCard title="Training Intensity (RPE)" url={urls.rpe} />
 
       </div>
     </div>
