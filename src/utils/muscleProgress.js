@@ -95,14 +95,6 @@ export function createMuscleTimeSeries(rows) {
   };
 }
 
-export function calculateBaseline(series, baselineWeeks = 4) {
-  const available = (series || []).filter((point) => point.volumeKg > 0).slice(0, baselineWeeks);
-  if (!available.length) return null;
-
-  const baseline = available.reduce((sum, point) => sum + point.volumeKg, 0) / available.length;
-  return baseline > 0 ? baseline : null;
-}
-
 export function calculateRollingVolume(series, selectedWeek, windowSize = 4) {
   if (!series?.length || selectedWeek == null) return null;
 
@@ -116,19 +108,42 @@ export function calculateRollingVolume(series, selectedWeek, windowSize = 4) {
   return window.reduce((sum, point) => sum + point.volumeKg, 0) / window.length;
 }
 
-export function calculateProgressPercent(series, selectedWeek) {
-  const baseline = calculateBaseline(series);
-  if (!baseline) return 0;
-
-  const rollingVolume = calculateRollingVolume(series, selectedWeek);
-  if (rollingVolume == null) return 0;
-
-  return (100 * (rollingVolume - baseline)) / baseline;
+function calculateBaseline(series, baselineWeeks = 4) {
+  const available = (series || []).filter((p) => p.volumeKg > 0).slice(0, baselineWeeks);
+  if (!available.length) return null;
+  const avg = available.reduce((sum, p) => sum + p.volumeKg, 0) / available.length;
+  return avg > 0 ? avg : null;
 }
 
-export function getMuscleProgressByWeek(muscleTimeSeries, selectedWeek) {
+export function calculateProgressPercent(series, selectedWeek, mode = 'week-vs-month') {
+  if (mode === 'week-vs-month') {
+    const current = series.find((p) => p.week === selectedWeek)?.volumeKg ?? null;
+    const previous = series.find((p) => p.week === selectedWeek - 4)?.volumeKg ?? null;
+    if (!previous || current == null) return null;
+    return (100 * (current - previous)) / previous;
+  }
+
+  if (mode === 'rolling') {
+    const current = calculateRollingVolume(series, selectedWeek);
+    const previous = calculateRollingVolume(series, selectedWeek - 4);
+    if (!previous || current == null) return null;
+    return (100 * (current - previous)) / previous;
+  }
+
+  if (mode === 'baseline') {
+    const baseline = calculateBaseline(series);
+    if (!baseline) return null;
+    const current = calculateRollingVolume(series, selectedWeek);
+    if (current == null) return null;
+    return (100 * (current - baseline)) / baseline;
+  }
+
+  return null;
+}
+
+export function getMuscleProgressByWeek(muscleTimeSeries, selectedWeek, mode = 'week-vs-month') {
   return Object.entries(muscleTimeSeries || {}).reduce((acc, [muscle, series]) => {
-    acc[muscle] = calculateProgressPercent(series, selectedWeek);
+    acc[muscle] = calculateProgressPercent(series, selectedWeek, mode);
     return acc;
   }, {});
 }

@@ -25,7 +25,7 @@ export default function LandingPage({ onMuscleClick, muscleTimeSeries, weekLabel
           My Training Progress
         </h1>
         <p style={{ fontSize: '14px', color: '#78716C', margin: 0, maxWidth: '420px' }}>
-          Move through the year to see how 4-week rolling volume changed against each muscle's first 4-week baseline.
+          Explore your 6-month training progression across every muscle group.
         </p>
       </div>
 

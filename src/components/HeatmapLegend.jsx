@@ -2,7 +2,13 @@ import React from 'react';
 import { APP_COLORS } from '../config';
 import { PROGRESS_BINS } from '../utils/colorScale';
 
-export default function HeatmapLegend() {
+const MODE_DESCRIPTIONS = {
+  'week-vs-month': 'Each week compared against the same week one month earlier.',
+  'rolling': '4-week rolling average compared against the previous 4-week rolling average.',
+  'baseline': '4-week rolling average compared against your first 4 weeks of training.',
+};
+
+export default function HeatmapLegend({ comparisonMode = 'week-vs-month' }) {
   return (
     <div style={{
       width: 'min(920px, 100%)',
@@ -16,7 +22,7 @@ export default function HeatmapLegend() {
         Progress Legend
       </div>
       <div style={{ color: '#78716C', fontSize: '13px', marginBottom: '14px' }}>
-        Showing 4-week rolling volume change vs first 4-week baseline.
+        {MODE_DESCRIPTIONS[comparisonMode]}
       </div>
       <div style={{
         display: 'grid',
