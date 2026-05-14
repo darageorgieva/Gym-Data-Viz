@@ -19,19 +19,15 @@ export default function TimeControls({
 }) {
   return (
     <div style={{
-      width: 'min(920px, 100%)',
-      background: '#F0EDE8',
-      border: `1px solid ${APP_COLORS.border}`,
-      borderRadius: '18px',
-      padding: '18px 18px 14px',
-      marginBottom: '20px',
+      width: 'min(1100px, 100%)',
+      marginBottom: '24px',
+      fontFamily: "'Space Grotesk', sans-serif",
     }}>
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
         gap: '16px',
-        marginBottom: '14px',
+        marginBottom: '12px',
         flexWrap: 'wrap',
       }}>
         <button
@@ -39,35 +35,35 @@ export default function TimeControls({
           style={{
             border: 'none',
             borderRadius: '999px',
-            background: '#1C1917',
-            color: '#FAFAF7',
-            padding: '10px 18px',
+            background: APP_COLORS.accent,
+            color: '#fff',
+            padding: '8px 20px',
             fontSize: '13px',
             fontWeight: '700',
             cursor: 'pointer',
-            minWidth: '92px',
+            fontFamily: "'Space Grotesk', sans-serif",
           }}
         >
           {isPlaying ? 'Pause' : 'Play'}
         </button>
 
-        <div style={{ color: '#1C1917', fontSize: '14px', fontWeight: '700' }}>
+        <input
+          type="range"
+          min={1}
+          max={Math.max(1, maxWeek)}
+          step={1}
+          value={selectedWeek}
+          onChange={(event) => onWeekChange(Number(event.target.value))}
+          style={{ flex: 1, accentColor: APP_COLORS.accent, minWidth: '120px' }}
+        />
+
+        <div style={{ fontSize: '14px', fontWeight: '700', color: APP_COLORS.text, whiteSpace: 'nowrap' }}>
           Week {selectedWeek}
-          <span style={{ color: '#78716C', fontWeight: '500', marginLeft: '8px' }}>
+          <span style={{ color: APP_COLORS.textLight, fontWeight: '500', marginLeft: '8px' }}>
             {currentWeekLabel}
           </span>
         </div>
       </div>
-
-      <input
-        type="range"
-        min={1}
-        max={Math.max(1, maxWeek)}
-        step={1}
-        value={selectedWeek}
-        onChange={(event) => onWeekChange(Number(event.target.value))}
-        style={{ width: '100%', accentColor: '#c84c31', marginBottom: '14px' }}
-      />
 
       <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
         {MODES.map((mode) => (
@@ -75,14 +71,17 @@ export default function TimeControls({
             key={mode.key}
             onClick={() => onModeChange(mode.key)}
             style={{
-              border: comparisonMode === mode.key ? '1.5px solid #1C1917' : `1.5px solid ${APP_COLORS.border}`,
+              border: comparisonMode === mode.key
+                ? `1.5px solid ${APP_COLORS.accent}`
+                : `1.5px solid ${APP_COLORS.border}`,
               borderRadius: '999px',
-              background: comparisonMode === mode.key ? '#1C1917' : 'transparent',
-              color: comparisonMode === mode.key ? '#FAFAF7' : '#78716C',
-              padding: '6px 14px',
+              background: comparisonMode === mode.key ? APP_COLORS.accent : 'transparent',
+              color: comparisonMode === mode.key ? '#fff' : APP_COLORS.textLight,
+              padding: '5px 14px',
               fontSize: '12px',
               fontWeight: '600',
               cursor: 'pointer',
+              fontFamily: "'Space Grotesk', sans-serif",
             }}
           >
             {mode.label}
@@ -92,4 +91,3 @@ export default function TimeControls({
     </div>
   );
 }
-
