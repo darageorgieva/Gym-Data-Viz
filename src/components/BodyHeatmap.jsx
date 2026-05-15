@@ -29,6 +29,7 @@ export default function BodyHeatmap({
   const [loadError, setLoadError] = useState(null);
   const [selectedWeek, setSelectedWeek] = useState(1);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [comparisonMode, setComparisonMode] = useState('week-vs-month');
   const [hoveredMuscle, setHoveredMuscle] = useState(null);
   const [selectedMuscle, setSelectedMuscle] = useState(null);
   const containerRef = useRef(null);
@@ -85,8 +86,8 @@ export default function BodyHeatmap({
   }, [isPlaying, maxWeek]);
 
   const progressByMuscle = useMemo(
-    () => getMuscleProgressByWeek(muscleTimeSeries, selectedWeek),
-    [muscleTimeSeries, selectedWeek]
+    () => getMuscleProgressByWeek(muscleTimeSeries, selectedWeek, comparisonMode),
+    [muscleTimeSeries, selectedWeek, comparisonMode]
   );
 
   const currentWeekLabel = weekLabels.find((item) => item.week === selectedWeek)?.label || '';
@@ -159,6 +160,8 @@ export default function BodyHeatmap({
         onWeekChange={setSelectedWeek}
         onTogglePlay={() => setIsPlaying((current) => !current)}
         currentWeekLabel={currentWeekLabel}
+        comparisonMode={comparisonMode}
+        onModeChange={setComparisonMode}
       />
 
       <div
@@ -183,6 +186,7 @@ export default function BodyHeatmap({
 
           .body-heatmap-svg #Click-regions path {
             cursor: pointer;
+            fill: #ececef !important;
             transition: fill 180ms ease, stroke 180ms ease, opacity 180ms ease, stroke-width 180ms ease;
             stroke: rgba(28, 25, 23, 0.18);
             stroke-width: 0.22;
@@ -222,7 +226,7 @@ export default function BodyHeatmap({
         )}
       </div>
 
-      <HeatmapLegend />
+      <HeatmapLegend comparisonMode={comparisonMode} />
     </>
   );
 }

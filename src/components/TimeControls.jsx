@@ -1,6 +1,12 @@
 import React from 'react';
 import { APP_COLORS } from '../config';
 
+const MODES = [
+  { key: 'week-vs-month', label: 'vs. Month Ago' },
+  { key: 'rolling',       label: '4-Week Rolling' },
+  { key: 'baseline',      label: 'vs. Starting Point' },
+];
+
 export default function TimeControls({
   selectedWeek,
   maxWeek,
@@ -8,6 +14,8 @@ export default function TimeControls({
   onWeekChange,
   onTogglePlay,
   currentWeekLabel,
+  comparisonMode,
+  onModeChange,
 }) {
   return (
     <div style={{
@@ -58,8 +66,29 @@ export default function TimeControls({
         step={1}
         value={selectedWeek}
         onChange={(event) => onWeekChange(Number(event.target.value))}
-        style={{ width: '100%', accentColor: '#c84c31' }}
+        style={{ width: '100%', accentColor: '#c84c31', marginBottom: '14px' }}
       />
+
+      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        {MODES.map((mode) => (
+          <button
+            key={mode.key}
+            onClick={() => onModeChange(mode.key)}
+            style={{
+              border: comparisonMode === mode.key ? '1.5px solid #1C1917' : `1.5px solid ${APP_COLORS.border}`,
+              borderRadius: '999px',
+              background: comparisonMode === mode.key ? '#1C1917' : 'transparent',
+              color: comparisonMode === mode.key ? '#FAFAF7' : '#78716C',
+              padding: '6px 14px',
+              fontSize: '12px',
+              fontWeight: '600',
+              cursor: 'pointer',
+            }}
+          >
+            {mode.label}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
