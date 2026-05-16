@@ -1,101 +1,132 @@
+// ─────────────────────────────────────────────────────────────
+// COLOR SYSTEM — 3-layer architecture
+//
+// Layer 1 — Functional anchors
+//   Terracotta #B5451B  →  gains, PRs, brand, heatmap dark end
+//   No cold anchor. The heatmap is sequential warm only —
+//   light-to-dark terracotta. This avoids encoding a value
+//   judgment (cold = bad) and keeps the full app warm/energetic.
+//   Source: Bartram et al. 2017; Cairo 2016 (framing honesty).
+//
+// Layer 2 — 12 muscle categorical hues
+//   Spread ~22° apart across the hue wheel.
+//   No warm-red or blue-slate zones used — those are owned
+//   by the terracotta accent and are avoided to prevent
+//   channel collision with the heatmap.
+//   Source: Healey 1996; Cairo 2016.
+//
+// Layer 3 — Stone neutrals
+//   All structural UI. Zero hue on furniture.
+//   Source: Tufte 1983; Few 2008.
+// ─────────────────────────────────────────────────────────────
+
+// Layer 1 — Functional accent
+export const FUNCTIONAL_COLORS = {
+  accent:      '#B5451B',  // terracotta — gains, PRs, play button, heatmap dark end
+  accentLight: '#FAE8DF',  // terracotta tint — heatmap light end, button bg
+};
+
+// Layer 1 — Sequential warm heatmap scale (light → dark terracotta)
+// Labels are qualitative, not numeric — the viewer reads intent,
+// not a threshold they have to decode. Source: Cairo 2016.
+// Matches PROGRESS_BINS in colorScale.js exactly.
+export const PROGRESS_SCALE = [
+  { label: 'Much less', color: '#FAE8DF' },
+  { label: 'Less',      color: '#F0C4A8' },
+  { label: 'Similar',   color: '#E09060' },
+  { label: 'More',      color: '#C86030' },
+  { label: 'Much more', color: '#B5451B' },
+];
+
+// No-data color for the heatmap — stone gray, distinct from the
+// warm scale so "can't compare" reads differently from "trained less".
+export const NO_DATA_COLOR = '#D4D2CC';
+
+// Layer 2 — Muscle categorical hues
+// Hue wheel positions: 38, 66, 94, 122, 150, 178, 230, 250, 270, 290, 310, 330
+// Adjacent muscles in this list alternate halves of the available
+// wheel arc so neighbouring items in the dropdown are visually distant.
 export const MUSCLE_CONFIG = {
   Shoulders: {
-    color: '#4F9DBD',
-    colorLight: '#AAD4E6',
+    color:      '#C2913D',  // H=38°  gold
+    colorLight: '#E8D4A8',
     exercise: 'Shoulder Press',
     label: 'Shoulders',
   },
   Chest: {
-    color: '#E8705E',
-    colorLight: '#F5BAB2',
+    color:      '#596AC0',  // H=230° periwinkle
+    colorLight: '#B4BDE0',
     exercise: 'Pec Deck',
     label: 'Chest',
   },
   Biceps: {
-    color: '#45AA8E',
-    colorLight: '#A6D5CA',
+    color:      '#A2AE3D',  // H=66°  yellow-green
+    colorLight: '#D8E0A8',
     exercise: 'Dumbbell Curl',
     label: 'Biceps',
   },
   Abs: {
-    color: '#F4B620',
-    colorLight: '#FADE80',
+    color:      '#6756BD',  // H=250° blue-violet
+    colorLight: '#BEBADE',
     exercise: 'Cable Crunch',
     label: 'Abs',
   },
   Quads: {
-    color: '#9080CE',
-    colorLight: '#C8BCE8',
+    color:      '#71AE42',  // H=94°  grass green
+    colorLight: '#C0DCA4',
     exercise: 'Leg Extension',
     label: 'Quads',
   },
   Triceps: {
-    color: '#E89040',
-    colorLight: '#F5CCA0',
+    color:      '#8551B8',  // H=270° purple
+    colorLight: '#C8B8DA',
     exercise: 'Tricep Pushdown',
     label: 'Triceps',
   },
   Traps: {
-    color: '#B09860',
-    colorLight: '#D8C8A0',
+    color:      '#46AF49',  // H=122° green
+    colorLight: '#A8DCAC',
     exercise: 'Chest Supported Row',
     label: 'Traps',
   },
   Lats: {
-    color: '#44A870',
-    colorLight: '#A2D4BA',
+    color:      '#A554B6',  // H=290° orchid
+    colorLight: '#D4B8DA',
     exercise: 'Lat Pulldown',
     label: 'Lats',
   },
   'Rear Delts': {
-    color: '#58A8CE',
-    colorLight: '#ACD4E6',
+    color:      '#46AF7A',  // H=150° sea green
+    colorLight: '#A8DCCA',
     exercise: 'Rear Delt Pec Deck',
     label: 'Rear Delts',
   },
   Glutes: {
-    color: '#E87090',
-    colorLight: '#F5B8C8',
+    color:      '#B851A7',  // H=310° magenta
+    colorLight: '#DCBAD8',
     exercise: 'Hip Thrust',
     label: 'Glutes',
   },
   Hamstrings: {
-    color: '#D47840',
-    colorLight: '#ECBCA0',
+    color:      '#47AEAA',  // H=178° cyan
+    colorLight: '#A8D8D6',
     exercise: 'Seated Leg Curl',
     label: 'Hamstrings',
   },
   Calves: {
-    color: '#7CB860',
-    colorLight: '#BED8B0',
+    color:      '#BC4E85',  // H=330° rose
+    colorLight: '#DCB8CC',
     exercise: 'Calf Raise',
     label: 'Calves',
   },
 };
 
-const BASE_WEIGHT_URL = 'https://flo.uri.sh/visualisation/28962149/embed';
-
-export const FLOURISH_URLS = {
-  Shoulders:    { weight: `${BASE_WEIGHT_URL}#muscle=Shoulder+Press`,       heatmap: null, rir: null, volume: null, rpe: null },
-  Chest:        { weight: `${BASE_WEIGHT_URL}#muscle=Pec+Deck`,             heatmap: null, rir: null, volume: null, rpe: null },
-  Biceps:       { weight: `${BASE_WEIGHT_URL}#muscle=Dumbbell+Curl`,        heatmap: null, rir: null, volume: null, rpe: null },
-  Abs:          { weight: `${BASE_WEIGHT_URL}#muscle=Cable+Crunch`,         heatmap: null, rir: null, volume: null, rpe: null },
-  Quads:        { weight: `${BASE_WEIGHT_URL}#muscle=Leg+Extension`,        heatmap: null, rir: null, volume: null, rpe: null },
-  Triceps:      { weight: `${BASE_WEIGHT_URL}#muscle=Tricep+Pushdown`,      heatmap: null, rir: null, volume: null, rpe: null },
-  Traps:        { weight: `${BASE_WEIGHT_URL}#muscle=Chest+Supported+Row`,  heatmap: null, rir: null, volume: null, rpe: null },
-  Lats:         { weight: `${BASE_WEIGHT_URL}#muscle=Lat+Pulldown`,         heatmap: null, rir: null, volume: null, rpe: null },
-  'Rear Delts': { weight: `${BASE_WEIGHT_URL}#muscle=Rear+Delt+Pec+Deck`,  heatmap: null, rir: null, volume: null, rpe: null },
-  Glutes:       { weight: `${BASE_WEIGHT_URL}#muscle=Hip+Thrust`,           heatmap: null, rir: null, volume: null, rpe: null },
-  Hamstrings:   { weight: `${BASE_WEIGHT_URL}#muscle=Seated+Leg+Curl`,      heatmap: null, rir: null, volume: null, rpe: null },
-  Calves:       { weight: `${BASE_WEIGHT_URL}#muscle=Calf+Raise`,           heatmap: null, rir: null, volume: null, rpe: null },
-};
-
+// Layer 3 — Stone neutrals (structural only, no hue)
 export const APP_COLORS = {
-  background: '#FFFFFF',
-  cardBackground: '#FFFFFF',
-  text: '#0D0D0D',
-  textLight: '#6B7280',
-  border: '#E5E7EB',
-  accent: '#FF5C3A',
-  cardShadow: '0 2px 12px rgba(0,0,0,0.07)',
+  background:     '#FFFFFF',
+  cardBackground: '#FAFAF7',
+  text:           '#1C1917',
+  textLight:      '#78716C',
+  border:         '#E7E5E0',
+  cardShadow:     '0 2px 12px rgba(0,0,0,0.07)',
 };

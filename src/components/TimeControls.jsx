@@ -1,5 +1,5 @@
 import React from 'react';
-import { APP_COLORS } from '../config';
+import { APP_COLORS, FUNCTIONAL_COLORS } from '../config';
 
 const MODES = [
   { key: 'week-vs-month', label: 'vs. Month Ago' },
@@ -34,17 +34,21 @@ export default function TimeControls({
           onClick={onTogglePlay}
           style={{
             border: 'none',
-            borderRadius: '999px',
-            background: APP_COLORS.accent,
+            borderRadius: '8px',
+            background: FUNCTIONAL_COLORS.accent,
             color: '#fff',
-            padding: '8px 20px',
-            fontSize: '13px',
+            padding: '10px 22px',
+            fontSize: '14px',
             fontWeight: '700',
             cursor: 'pointer',
             fontFamily: "'Space Grotesk', sans-serif",
+            display: 'flex',
+            alignItems: 'center',
+            gap: '7px',
+            letterSpacing: '0.01em',
           }}
         >
-          {isPlaying ? 'Pause' : 'Play'}
+          {isPlaying ? '⏸' : '▶'} {isPlaying ? 'Pause' : 'Play'}
         </button>
 
         <input
@@ -54,7 +58,7 @@ export default function TimeControls({
           step={1}
           value={selectedWeek}
           onChange={(event) => onWeekChange(Number(event.target.value))}
-          style={{ flex: 1, accentColor: APP_COLORS.accent, minWidth: '120px' }}
+          style={{ flex: 1, accentColor: FUNCTIONAL_COLORS.accent, minWidth: '120px' }}
         />
 
         <div style={{ fontSize: '14px', fontWeight: '700', color: APP_COLORS.text, whiteSpace: 'nowrap' }}>
@@ -72,11 +76,11 @@ export default function TimeControls({
             onClick={() => onModeChange(mode.key)}
             style={{
               border: comparisonMode === mode.key
-                ? `1.5px solid ${APP_COLORS.accent}`
+                ? `1.5px solid ${FUNCTIONAL_COLORS.accent}`
                 : `1.5px solid ${APP_COLORS.border}`,
               borderRadius: '999px',
-              background: comparisonMode === mode.key ? APP_COLORS.accent : 'transparent',
-              color: comparisonMode === mode.key ? '#fff' : APP_COLORS.textLight,
+              background: comparisonMode === mode.key ? FUNCTIONAL_COLORS.accentLight : 'transparent',
+              color: comparisonMode === mode.key ? FUNCTIONAL_COLORS.accent : APP_COLORS.textLight,
               padding: '5px 14px',
               fontSize: '12px',
               fontWeight: '600',

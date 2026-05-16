@@ -75,8 +75,8 @@ export default function App() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: '#FAFAF7',
-        fontFamily: 'Arial, sans-serif',
+        background: '#FFFFFF',
+        fontFamily: "'Space Grotesk', sans-serif",
         fontSize: '16px',
         color: '#78716C',
       }}>
