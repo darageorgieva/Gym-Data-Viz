@@ -18,7 +18,7 @@ export default function LandingPage({ onMuscleClick, muscleTimeSeries, weekLabel
     }}>
       <div style={{ textAlign: 'center', marginBottom: '12px' }}>
         <h1 style={{ fontSize: isMobile ? '26px' : '36px', fontWeight: '800', color: APP_COLORS.text, margin: '0 0 10px' }}>
-          My Training Progress
+          Gym Progress Atlas
         </h1>
         <p style={{ fontSize: '14px', color: APP_COLORS.textLight, margin: 0, maxWidth: '420px' }}>
           Explore your 6-month training progression across every muscle group.
