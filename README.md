@@ -39,11 +39,20 @@ An interactive SVG anatomy diagram that encodes weekly training volume across al
 
 **Comparison modes (pill buttons):**
 
-| Mode | What it computes |
-|---|---|
-| vs. Month Ago | Current week's volume vs. the same week 4 weeks prior |
-| 4-Week Rolling | 4-week rolling average vs. the rolling average 4 weeks prior |
-| vs. Starting Point | 4-week rolling average vs. the first 4 training weeks (baseline) |
+| Mode | What it computes | Who it is for |
+|---|---|---|
+| vs. Month Ago | Week N volume vs. week N−4 volume | Athletes following structured cyclic training (load/deload cycles) |
+| 4-Week Rolling | Week N volume vs. average of weeks N−4 through N−1 | Anyone tracking general month-to-month progress |
+
+**Mode rationale:**
+
+*vs. Month Ago* is designed for structured athletes whose training follows a repeating cycle (e.g. 3 load weeks + 1 deload). Comparing week N to week N−4 means both data points had the same intent — both were load weeks, or both were deload weeks. The volume change is therefore a pure signal of progression, not a side-effect of where you happen to be in the current cycle.
+
+The 4-week offset is valid for programs built on 4-week cycles: **Wendler 5/3/1** (3 training weeks + 1 deload = 4 weeks), **Renaissance Periodization standard mesocycles** (4-week hypertrophy blocks), and most upper/lower or push/pull/legs splits with a built-in monthly deload. It also applies to female athletes whose menstrual cycle runs approximately 28 days — the follicular and luteal phases directly affect strength, recovery, and perceived effort, so comparing the same week across two cycles controls for hormonal factors that would otherwise confound the volume signal.
+
+The mode is less meaningful for programs with a different cycle length: 3-week Sheiko waves, 6–8 week powerlifting peaking blocks, or Daily Undulating Periodization (where variation happens within the week rather than across weeks). Athletes on those structures should use the 4-Week Rolling mode instead.
+
+*4-Week Rolling* is designed for the question "am I doing better this week than my recent general level?" The reference is the average of the 4 weeks immediately before the current week. Averaging 4 consecutive weeks means the baseline always contains the full variety of training factors — at least one heavier week, one lighter week, life interruptions — so it absorbs within-cycle noise and seasonality. The current week is kept raw so individual-week signal is not diluted. The comparison answers whether this week's effort is above or below that stable, representative baseline.
 
 **Color scale** — sequential warm terracotta, light → dark (5 bins):
 
@@ -58,6 +67,8 @@ An interactive SVG anatomy diagram that encodes weekly training volume across al
 Stone gray (`#E7E5E0`) signals "no comparison available" — e.g. muscle had zero volume 4 weeks ago so the reference week doesn't exist. Absence of data is not the same as a low-training week and must not look like one.
 
 **Interaction:** hover shows a floating tooltip with muscle name and ±% value; click navigates to the per-muscle dashboard.
+
+**Reactive legend:** hovering a muscle simultaneously highlights the matching colour bin in the legend panel — the active bin gains a visible ring and bold label, while all other bins fade. This creates a direct perceptual link between the spatial encoding (body region) and the colour encoding (legend scale), reducing the cognitive work of cross-referencing: the viewer does not need to read the tooltip value, locate it mentally on the scale, and find the matching bin — the legend updates in place. It also benefits viewers with colour vision deficiency: even if the exact hue difference between two adjacent bins is hard to distinguish on the body, hovering any muscle produces an unambiguous highlight in the legend that names the bin and shows its boundary values.
 
 **Routing:** `?muscle=Biceps` query param preserves browser history so back/forward and direct links work correctly.
 
@@ -145,20 +156,20 @@ A diverging scale (cold ↔ warm) encodes a value judgment: blue end = bad, warm
 **12 color categories**
 Cairo recommends ≤7 categories for rapid color discrimination (Healey 1996 finds ~7 for preattentive discrimination). Mitigation: on the landing page, spatial position on the anatomical diagram is the primary encoder and color is secondary reinforcement. Colors are never compared across muscles on a single chart — each dashboard shows only one muscle's accent color against stone neutrals. Discrimination limits apply most strictly when color is the sole channel.
 
+**Colour vision deficiency**
+The heatmap uses a single-hue sequential scale (light → dark terracotta) rather than a multi-hue or red-green diverging scale. A monotonic luminance gradient is the most robust encoding for colour vision deficiency because it depends on lightness contrast, not hue discrimination — deuteranopia and protanopia preserve lightness differences far more reliably than hue differences. The reactive legend reinforces this further: hovering any muscle produces a labelled highlight in the legend regardless of whether the viewer can distinguish the exact colour on the body. Source: Brewer (1997); Ware (2004) on luminance as a primary channel.
+
 **Line chart for weight progression**
 A line implies continuous change between measurements; gym sessions are discrete events. The choice was deliberate: the trend (are you getting stronger?) is more important than session-by-session comparison, and a line communicates trend more clearly than a scatter or bar. Defensible trade-off, not an oversight.
 
 **Bar chart for volume**
 Volume (`weight × reps`) is a derived metric. Using bars (discrete, atomic) signals correctly that each session stands alone — there is no meaningful interpolation between two volume measurements.
 
-**Three comparison modes on the body heatmap**
-Week-vs-month catches recent momentum shifts. 4-week rolling smooths out noisy individual weeks. Vs. starting point shows the full training arc. All three use the same color scale; switching modes does not require re-learning the legend. The mode buttons are pill-shaped toggles rather than a dropdown so both options are always visible at a glance.
+**Two comparison modes on the body heatmap**
+The two modes answer different questions and are designed for different training contexts. *vs. Month Ago* compares the same position in two consecutive cycles, isolating volume change from cycle-phase effects — valid only when training is structured and cyclic. *4-Week Rolling* compares the current raw week against the average of the prior 4 weeks; because the 4-week average always spans a full cycle's worth of variety (load, deload, life factors), it creates a seasonality-aware baseline and answers whether this week is above or below the recent general trend. Both use the same color scale; switching modes does not require re-learning the legend. The mode buttons are pill-shaped toggles rather than a dropdown so both options are always visible at a glance.
 
 **Interactive anatomy vs. dropdown**
 A dropdown with 12 muscle names is cognitively equivalent to reading a list. The anatomy SVG reduces lookup cost by letting the user point at their own body — spatial memory replaces label scanning. Trade-off: implementation complexity and the need to map SVG regions to muscle groups precisely.
-
-**URL-based navigation**
-`?muscle=Biceps` means browser back/forward works naturally and a specific dashboard can be bookmarked. Small implementation cost for a significant UX improvement.
 
 ---
 

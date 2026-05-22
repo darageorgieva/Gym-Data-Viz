@@ -14,13 +14,13 @@ export default function LandingPage({ onMuscleClick, muscleTimeSeries, weekLabel
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      padding: isMobile ? '28px 16px 48px' : '48px 24px 80px',
+      padding: isMobile ? '28px 16px 48px' : 'clamp(10px, 1.2vh, 20px) clamp(16px, 4vw, 48px) clamp(20px, 2.5vh, 40px)',
     }}>
-      <div style={{ textAlign: 'center', marginBottom: '12px' }}>
-        <h1 style={{ fontSize: isMobile ? '26px' : '36px', fontWeight: '800', color: APP_COLORS.text, margin: '0 0 10px' }}>
+      <div style={{ textAlign: 'center', marginBottom: isMobile ? '12px' : '6px' }}>
+        <h1 style={{ fontSize: isMobile ? '28px' : 'clamp(24px, 2.4vw, 36px)', fontWeight: '800', color: APP_COLORS.text, margin: '0 0 4px' }}>
           Gym Progress Atlas
         </h1>
-        <p style={{ fontSize: '14px', color: APP_COLORS.textLight, margin: 0, maxWidth: '420px' }}>
+        <p style={{ fontSize: isMobile ? '13px' : 'clamp(11px, 0.9vw, 13px)', color: APP_COLORS.textLight, margin: 0, maxWidth: '420px' }}>
           Explore your 6-month training progression across every muscle group.
         </p>
       </div>

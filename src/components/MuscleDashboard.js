@@ -26,7 +26,7 @@
 // does not repaint.
 // ─────────────────────────────────────────────────────────────
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, ReferenceLine,
@@ -110,6 +110,15 @@ export default function MuscleDashboard({ muscle, sessions, volumeData, muscleDa
   const tickCount = 6;
   const step = Math.floor(sessions.length / tickCount);
   const ticks = sessions.filter((_, i) => i % step === 0).map(s => s.date);
+
+  useEffect(() => {
+    if (document.querySelector('script[data-tableau-embed]')) return;
+    const script = document.createElement('script');
+    script.type = 'module';
+    script.src = 'https://public.tableau.com/javascripts/api/tableau.embedding.3.latest.min.js';
+    script.setAttribute('data-tableau-embed', '');
+    document.head.appendChild(script);
+  }, []);
 
   return (
     <div style={{
@@ -210,18 +219,18 @@ export default function MuscleDashboard({ muscle, sessions, volumeData, muscleDa
           </div>
         </div>
 
-        {/* Weight Progression */}
+        {/* Weight Progression — Tableau embed */}
         <div style={cardStyle}>
           <h3 style={{ margin: '0 0 16px', fontSize: '15px', fontWeight: '600', color: APP_COLORS.text }}>Weight Progression</h3>
-          <ResponsiveContainer width="100%" height={220}>
-            <LineChart data={sessions} margin={{ top: 4, right: 8, bottom: 4, left: -10 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={APP_COLORS.border} vertical={false} />
-              <XAxis dataKey="date" tickFormatter={formatDate} ticks={ticks} tick={{ fontSize: 11, fill: APP_COLORS.textLight }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: APP_COLORS.textLight }} axisLine={false} tickLine={false} domain={['auto', 'auto']} unit="kg" />
-              <Tooltip content={<CustomTooltip color={color} />} />
-              <Line type="monotone" dataKey="weight_kg" stroke={color} strokeWidth={2.5} dot={false} activeDot={{ r: 5, fill: color }} name="Weight" unit="kg" />
-            </LineChart>
-          </ResponsiveContainer>
+          <tableau-viz
+            src="https://public.tableau.com/views/test_17794812388080/Sheet1"
+            width="100%"
+            height="400"
+            hide-tabs
+            toolbar="hidden"
+          >
+            <viz-filter field="Muscle Group" value={muscle} />
+          </tableau-viz>
         </div>
 
         {/* Heatmap */}

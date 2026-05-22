@@ -149,7 +149,7 @@ export default function BodyHeatmap({
   }
 
   return (
-    <div style={{ width: 'min(1100px, 100%)' }}>
+    <div style={{ width: 'min(1600px, 96vw)' }}>
       <TimeControls
         selectedWeek={selectedWeek}
         maxWeek={maxWeek}
@@ -164,17 +164,26 @@ export default function BodyHeatmap({
       <div style={{
         display: 'flex',
         flexDirection: isMobile ? 'column' : 'row',
-        gap: '40px',
+        gap: 'clamp(20px, 4vw, 60px)',
         alignItems: 'flex-start',
+        justifyContent: isMobile ? 'flex-start' : 'center',
       }}>
-        {/* SVG — left column, bigger */}
-        <div style={{ flex: '0 0 62%', position: 'relative' }}>
+        {/* SVG — left column, sized by content height on desktop */}
+        <div style={{ flex: isMobile ? '0 0 100%' : '0 1 auto', position: 'relative' }}>
           <style>{`
             .body-heatmap-svg svg {
               display: block;
               width: 100%;
               height: auto;
-              max-height: 900px;
+              max-height: min(calc(100vh - 160px), 820px);
+            }
+
+            @media (min-width: 900px) {
+              .body-heatmap-svg svg {
+                width: auto;
+                height: min(calc(100vh - 160px), 820px);
+                max-width: 100%;
+              }
             }
 
             .body-heatmap-svg #Reference {
@@ -204,8 +213,8 @@ export default function BodyHeatmap({
         </div>
 
         {/* Legend — right column */}
-        <div style={{ flex: 1, paddingTop: isMobile ? '0' : '8px' }}>
-          <HeatmapLegend comparisonMode={comparisonMode} />
+        <div style={{ flex: '0 0 240px', width: '240px' }}>
+          <HeatmapLegend comparisonMode={comparisonMode} hoveredProgress={hoveredProgress} />
         </div>
       </div>
 
