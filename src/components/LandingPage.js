@@ -20,8 +20,11 @@ export default function LandingPage({ onMuscleClick, muscleTimeSeries, weekLabel
         <h1 style={{ fontSize: isMobile ? '28px' : 'clamp(24px, 2.4vw, 36px)', fontWeight: '800', color: APP_COLORS.text, margin: '0 0 4px' }}>
           Gym Progress Atlas
         </h1>
-        <p style={{ fontSize: isMobile ? '13px' : 'clamp(11px, 0.9vw, 13px)', color: APP_COLORS.textLight, margin: 0, maxWidth: '420px' }}>
+        <p style={{ fontSize: isMobile ? '13px' : 'clamp(11px, 0.9vw, 13px)', color: APP_COLORS.textLight, margin: '0 auto 6px', maxWidth: '420px' }}>
           Explore your 6-month training progression across every muscle group.
+        </p>
+        <p style={{ fontSize: isMobile ? '12px' : 'clamp(10px, 0.8vw, 12px)', color: APP_COLORS.textLight, margin: 0, fontWeight: '600', letterSpacing: '0.04em' }}>
+          Click any muscle group to open its dashboard.
         </p>
       </div>
 
