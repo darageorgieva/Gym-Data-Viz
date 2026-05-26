@@ -1,4 +1,4 @@
-date,muscle_group,exercise_name,weight_kg,reps,sets,rpe,rir,session_duration_minutes
+﻿date,muscle_group,exercise_name,weight_kg,reps,sets,rpe,rir,session_duration_minutes
 2025-10-01,Shoulders,Shoulder Press,35,7,1,8,1,50
 2025-10-01,Chest,Pec Deck,25,9,1,9,0,50
 2025-10-01,Biceps,Dumbbell Curl,20,7,1,8,1,50
