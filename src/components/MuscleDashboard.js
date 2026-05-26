@@ -21,6 +21,19 @@ import MusclePicker from './MusclePicker';
 const TABLEAU_VIEWS = {
   normal:   'https://public.tableau.com/views/gym_normal/Normal?:language=en-GB&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link',
   advanced: 'https://public.tableau.com/views/gym_advanced/Advanced?:language=en-GB&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link',
+  gems:     'https://public.tableau.com/views/hidden-gems_17798292209230/Sheet1?:language=en-GB&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link',
+};
+
+const VIEW_OPTIONS = [
+  { id: 'normal',   label: 'NORMAL' },
+  { id: 'advanced', label: 'ADVANCED' },
+  { id: 'gems',     label: 'GEMS' },
+];
+
+const VIEW_TITLES = {
+  normal:   'Weight progression & training consistency',
+  advanced: 'Proximity to failure',
+  gems:     'Hidden gems — progress without weight increase',
 };
 
 const FONT_SANS = "'DM Sans', sans-serif";
@@ -77,7 +90,6 @@ function KPI({ label, value, unit, color }) {
 }
 
 function ViewToggle({ view, onChange }) {
-  const isNormal = view === 'normal';
   const baseBtn = {
     border: 'none',
     cursor: 'pointer',
@@ -97,28 +109,50 @@ function ViewToggle({ view, onChange }) {
       borderRadius: 10,
       padding: 4,
     }}>
-      <button
-        onClick={() => onChange('normal')}
-        style={{
-          ...baseBtn,
-          background: isNormal ? APP_COLORS.text : 'transparent',
-          color: isNormal ? '#FFFFFF' : APP_COLORS.textLight,
-        }}
-      >
-        NORMAL
-      </button>
-      <button
-        onClick={() => onChange('advanced')}
-        style={{
-          ...baseBtn,
-          background: !isNormal ? APP_COLORS.text : 'transparent',
-          color: !isNormal ? '#FFFFFF' : APP_COLORS.textLight,
-        }}
-      >
-        ADVANCED
-      </button>
+      {VIEW_OPTIONS.map((opt) => {
+        const active = view === opt.id;
+        return (
+          <button
+            key={opt.id}
+            onClick={() => onChange(opt.id)}
+            style={{
+              ...baseBtn,
+              background: active ? APP_COLORS.text : 'transparent',
+              color: active ? '#FFFFFF' : APP_COLORS.textLight,
+            }}
+          >
+            {opt.label}
+          </button>
+        );
+      })}
     </div>
   );
+}
+
+// A session is a "hidden gem" if, at the same weight bucket (±0.5kg)
+// as a previous session, it scored either more work (reps × sets) or
+// a meaningfully lower RIR. The PR itself never qualifies.
+function computeHiddenGems(sessions) {
+  if (!sessions.length) return [];
+  const pr = Math.max(...sessions.map((s) => s.weight_kg || 0));
+  const bestByWeight = new Map();
+  const gems = [];
+  sessions.forEach((s, i) => {
+    const key = Math.round((s.weight_kg || 0) * 2) / 2;
+    const work = (s.reps || 0) * (s.sets || 1);
+    const isPR = s.weight_kg === pr;
+    const prev = bestByWeight.get(key);
+    if (prev && !isPR) {
+      const repsBetter = work > prev.work;
+      const rirBetter = s.rir != null && prev.rir != null && s.rir < prev.rir - 0.3;
+      if (repsBetter) gems.push({ index: i, session: s, reason: 'reps' });
+      else if (rirBetter) gems.push({ index: i, session: s, reason: 'rir' });
+    }
+    if (!prev || work > prev.work) {
+      bestByWeight.set(key, { work, rir: s.rir });
+    }
+  });
+  return gems;
 }
 
 function formatDateMonShort(dateStr) {
@@ -169,6 +203,7 @@ export default function MuscleDashboard({ initialMuscle, getSessionsForMuscle, n
         prSession: null, prDateLabel: '—',
         rangeStart: null, rangeEnd: null,
         rangeLabel: '—',
+        gemCount: 0, repsGems: 0, rirGems: 0,
       };
     }
     const pr = Math.max(...sessions.map((s) => s.weight_kg || 0));
@@ -188,6 +223,7 @@ export default function MuscleDashboard({ initialMuscle, getSessionsForMuscle, n
       1,
       Math.round((rangeEnd - rangeStart) / (1000 * 60 * 60 * 24 * 7))
     );
+    const gems = computeHiddenGems(sessions);
     return {
       pr,
       start,
@@ -204,6 +240,9 @@ export default function MuscleDashboard({ initialMuscle, getSessionsForMuscle, n
       rangeStart,
       rangeEnd,
       rangeLabel: formatRangeLabel(rangeStart, rangeEnd),
+      gemCount: gems.length,
+      repsGems: gems.filter((g) => g.reason === 'reps').length,
+      rirGems: gems.filter((g) => g.reason === 'rir').length,
     };
   }, [sessions]);
 
@@ -427,13 +466,67 @@ export default function MuscleDashboard({ initialMuscle, getSessionsForMuscle, n
             <div>
               <Eyebrow color={color}>tableau · gym_{view} · {muscle.toLowerCase()}</Eyebrow>
               <div style={{ fontSize: 16, fontWeight: 700, marginTop: 2 }}>
-                {view === 'normal'
-                  ? 'Weight progression & training consistency'
-                  : 'Proximity to failure'}
+                {VIEW_TITLES[view]}
               </div>
             </div>
             <ViewToggle view={view} onChange={setView} />
           </div>
+
+          {view === 'gems' && (
+            <div style={{
+              background: APP_COLORS.background,
+              border: `1px solid ${APP_COLORS.border}`,
+              borderRadius: 2,
+              padding: '14px 18px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: isMobile ? 18 : 28,
+              flexWrap: 'wrap',
+            }}>
+              <div>
+                <Eyebrow color={color}>Hidden gems found</Eyebrow>
+                <div style={{
+                  fontSize: 26,
+                  fontWeight: 800,
+                  color,
+                  marginTop: 2,
+                  letterSpacing: '-0.02em',
+                  lineHeight: 1,
+                }}>
+                  <MonoNum>{derived.gemCount}</MonoNum>
+                  <span style={{
+                    fontSize: 11,
+                    color: APP_COLORS.textFaint,
+                    fontWeight: 700,
+                    marginLeft: 4,
+                  }}>of {derived.sessionsCount}</span>
+                </div>
+              </div>
+              <VRule height={40} />
+              <div>
+                <Eyebrow>Via more reps/sets</Eyebrow>
+                <div style={{ fontSize: 18, fontWeight: 800, marginTop: 2 }}>
+                  <MonoNum>{derived.repsGems}</MonoNum>
+                </div>
+              </div>
+              <VRule height={40} />
+              <div>
+                <Eyebrow>Via lower RIR</Eyebrow>
+                <div style={{ fontSize: 18, fontWeight: 800, marginTop: 2 }}>
+                  <MonoNum>{derived.rirGems}</MonoNum>
+                </div>
+              </div>
+              <div style={{ flex: 1, minWidth: 120 }} />
+              <div style={{
+                maxWidth: 380,
+                fontSize: 12,
+                color: APP_COLORS.textLight,
+                lineHeight: 1.5,
+              }}>
+                Sessions where the load stayed flat but the work got better — more reps, more sets, or the same effort at a lower reps-in-reserve. The PR is the trophy; these are the days that built it.
+              </div>
+            </div>
+          )}
 
           <div style={{
             flex: 1,
@@ -452,7 +545,7 @@ export default function MuscleDashboard({ initialMuscle, getSessionsForMuscle, n
               hide-tabs
               toolbar="hidden"
             >
-              <viz-filter field="Muscle Group" value={muscle} />
+              <viz-parameter name="pMuscle" value={muscle} />
             </tableau-viz>
           </div>
         </div>
