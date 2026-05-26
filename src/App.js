@@ -90,6 +90,7 @@ export default function App() {
       <MuscleDashboard
         initialMuscle={selectedMuscle}
         getSessionsForMuscle={getSessionsForMuscle}
+        navigateToMuscle={navigateToMuscle}
         onBack={handleDashboardBack}
       />
     );

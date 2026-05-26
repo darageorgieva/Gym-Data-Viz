@@ -1,129 +1,77 @@
 // ─────────────────────────────────────────────────────────────
-// MULTI-MUSCLE DASHBOARD
+// MUSCLE DASHBOARD — Direction A · "Instrument"
 //
-// One full-screen Tableau dashboard, two view modes:
-//   Normal   → Weight Progression + Training Consistency
-//   Advanced → Reps in Reserve + Training Intensity (RPE)
+// Single-muscle deep readout. One muscle in focus, sourced from
+// the URL (?muscle=...). The body-map click on the landing page
+// is the primary entry; the MusclePicker in the rule bar lets
+// the user page through the other 11 muscles without losing
+// their place in browser history.
 //
-// Muscle multi-select: user toggles any subset of muscles on/off
-// to compare them across the charts. The selection is passed into
-// Tableau via a viz-filter on the "Muscle Group" field.
-//
-// Stats cards stay (one per selected muscle) so the qualitative
-// outcome — PR, total gain, sessions — is always visible next to
-// the charts. When the user lands here from the body map, the
-// clicked muscle is pre-selected; they can add more from the
-// toggle bar.
-//
-// The single accent color rule from the original dashboard still
-// applies: each muscle's color appears only on its identity dot,
-// PR number, and total-gain value. Furniture stays stone-neutral.
+// Layout, top to bottom:
+//   3px accent rule  →  rule bar  →  hero  →  KPI strip
+//                                 →  view tabs (Normal / Advanced)
+//                                 →  Tableau viewport
 // ─────────────────────────────────────────────────────────────
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { MUSCLE_CONFIG, APP_COLORS } from '../config';
 import { useIsMobile } from '../useIsMobile';
+import MusclePicker from './MusclePicker';
 
-// ── Tableau URLs — REPLACE with published workbook URLs ───────
-// See TABLEAU_BUILD.md for how to build and publish these.
 const TABLEAU_VIEWS = {
   normal:   'https://public.tableau.com/views/gym_normal/Normal?:language=en-GB&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link',
   advanced: 'https://public.tableau.com/views/gym_advanced/Advanced?:language=en-GB&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link',
 };
 
-const cardStyle = {
-  background: APP_COLORS.cardBackground,
-  borderRadius: '16px',
-  padding: '24px',
-  marginBottom: '20px',
-};
+const FONT_SANS = "'DM Sans', sans-serif";
+const FONT_MONO = "'DM Mono', 'JetBrains Mono', monospace";
 
-function MuscleStatsCard({ muscle, sessions }) {
-  const config = MUSCLE_CONFIG[muscle];
-  if (!config || !sessions.length) return null;
-  const { color, label, exercise } = config;
-  const pr = Math.max(...sessions.map(s => s.weight_kg));
-  const startWeight = sessions[0]?.weight_kg || 0;
-  const totalGain = pr - startWeight;
-
+function Eyebrow({ children, color, style }) {
   return (
     <div style={{
-      background: APP_COLORS.cardBackground,
-      borderRadius: '14px',
-      padding: '16px 20px',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '8px',
-      minWidth: '220px',
-      flex: '1 1 220px',
-    }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: color, flexShrink: 0 }} />
-        <div style={{ fontSize: '15px', fontWeight: '700', color: APP_COLORS.text }}>{label}</div>
-        <div style={{ fontSize: '11px', color: APP_COLORS.textLight, marginLeft: 'auto' }}>{exercise}</div>
-      </div>
-      <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
-        <div>
-          <div style={{ fontSize: '10px', color: APP_COLORS.textLight, fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.06em' }}>PR</div>
-          <div style={{ fontSize: '22px', fontWeight: '800', color, lineHeight: 1.1 }}>
-            {pr}<span style={{ fontSize: '11px', color: APP_COLORS.textLight, marginLeft: '3px' }}>kg</span>
-          </div>
-        </div>
-        <div>
-          <div style={{ fontSize: '10px', color: APP_COLORS.textLight, fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Gain</div>
-          <div style={{ fontSize: '22px', fontWeight: '700', color, lineHeight: 1.1 }}>
-            +{totalGain.toFixed(1)}<span style={{ fontSize: '11px', color: APP_COLORS.textLight, marginLeft: '3px' }}>kg</span>
-          </div>
-        </div>
-        <div>
-          <div style={{ fontSize: '10px', color: APP_COLORS.textLight, fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Sessions</div>
-          <div style={{ fontSize: '22px', fontWeight: '700', color: APP_COLORS.text, lineHeight: 1.1 }}>{sessions.length}</div>
-        </div>
-      </div>
-    </div>
+      fontSize: 10,
+      fontWeight: 700,
+      letterSpacing: '0.14em',
+      textTransform: 'uppercase',
+      color: color || APP_COLORS.textFaint,
+      fontFamily: FONT_SANS,
+      ...style,
+    }}>{children}</div>
   );
 }
 
-function MuscleTogglePills({ allMuscles, selectedMuscles, onToggle }) {
+function MonoNum({ children, style }) {
   return (
-    <div style={{
-      display: 'flex',
-      flexWrap: 'wrap',
-      gap: '8px',
-      marginBottom: '20px',
-    }}>
-      {allMuscles.map(muscle => {
-        const config = MUSCLE_CONFIG[muscle];
-        const isSelected = selectedMuscles.has(muscle);
-        return (
-          <button
-            key={muscle}
-            onClick={() => onToggle(muscle)}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '6px 14px',
-              borderRadius: '999px',
-              border: `1.5px solid ${isSelected ? config.color : APP_COLORS.border}`,
-              background: isSelected ? config.color : APP_COLORS.cardBackground,
-              color: isSelected ? '#FFFFFF' : APP_COLORS.text,
-              fontSize: '13px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              transition: 'all 120ms ease',
-            }}
-          >
-            <span style={{
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
-              background: isSelected ? '#FFFFFF' : config.color,
-            }} />
-            {config.label}
-          </button>
-        );
-      })}
+    <span style={{
+      fontFamily: FONT_MONO,
+      fontVariantNumeric: 'tabular-nums',
+      ...style,
+    }}>{children}</span>
+  );
+}
+
+function VRule({ height, color }) {
+  return <div style={{ width: 1, height, background: color || APP_COLORS.border }} />;
+}
+
+function KPI({ label, value, unit, color }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 }}>
+      <Eyebrow>{label}</Eyebrow>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 3 }}>
+        <span style={{
+          fontSize: 22,
+          fontWeight: 800,
+          letterSpacing: '-0.02em',
+          color: color || APP_COLORS.text,
+          lineHeight: 1,
+        }}>
+          <MonoNum>{value}</MonoNum>
+        </span>
+        {unit && (
+          <span style={{ fontSize: 10, color: APP_COLORS.textFaint, fontWeight: 600 }}>{unit}</span>
+        )}
+      </div>
     </div>
   );
 }
@@ -134,19 +82,20 @@ function ViewToggle({ view, onChange }) {
     border: 'none',
     cursor: 'pointer',
     padding: '8px 18px',
-    borderRadius: '8px',
-    fontSize: '13px',
-    fontWeight: '700',
+    borderRadius: 8,
+    fontSize: 13,
+    fontWeight: 700,
     letterSpacing: '0.04em',
     transition: 'all 120ms ease',
+    fontFamily: FONT_SANS,
   };
   return (
     <div style={{
       display: 'inline-flex',
-      background: APP_COLORS.cardBackground,
+      background: APP_COLORS.background,
       border: `1px solid ${APP_COLORS.border}`,
-      borderRadius: '10px',
-      padding: '4px',
+      borderRadius: 10,
+      padding: 4,
     }}>
       <button
         onClick={() => onChange('normal')}
@@ -172,12 +121,28 @@ function ViewToggle({ view, onChange }) {
   );
 }
 
-export default function MuscleDashboard({ initialMuscle, getSessionsForMuscle, onBack }) {
+function formatDateMonShort(dateStr) {
+  if (!dateStr) return '—';
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+}
+
+function formatRangeLabel(start, end) {
+  const fmt = (d) => d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  return `${fmt(start)} → ${fmt(end)}`;
+}
+
+function pickNumber(value, digits = 0) {
+  if (value == null || isNaN(value)) return '—';
+  return Number.isInteger(value) ? String(value) : value.toFixed(digits);
+}
+
+export default function MuscleDashboard({ initialMuscle, getSessionsForMuscle, navigateToMuscle, onBack }) {
   const isMobile = useIsMobile();
-  const allMuscles = useMemo(() => Object.keys(MUSCLE_CONFIG), []);
-  const [selectedMuscles, setSelectedMuscles] = useState(
-    () => new Set(initialMuscle ? [initialMuscle] : [])
-  );
+  const muscle = initialMuscle;
+  const config = MUSCLE_CONFIG[muscle];
+  const color = config ? config.color : APP_COLORS.text;
+
   const [view, setView] = useState('normal');
 
   useEffect(() => {
@@ -189,148 +154,310 @@ export default function MuscleDashboard({ initialMuscle, getSessionsForMuscle, o
     document.head.appendChild(script);
   }, []);
 
-  const toggleMuscle = (muscle) => {
-    setSelectedMuscles(prev => {
-      const next = new Set(prev);
-      if (next.has(muscle)) next.delete(muscle);
-      else next.add(muscle);
-      return next;
-    });
-  };
-
-  const selectedList = useMemo(
-    () => allMuscles.filter(m => selectedMuscles.has(m)),
-    [allMuscles, selectedMuscles]
+  const sessions = useMemo(
+    () => (muscle && getSessionsForMuscle ? getSessionsForMuscle(muscle) : []),
+    [muscle, getSessionsForMuscle]
   );
 
-  const filterValue = selectedList.join(',');
-  const tableauSrc = TABLEAU_VIEWS[view];
+  const derived = useMemo(() => {
+    if (!sessions.length) {
+      return {
+        pr: 0, start: 0, gain: 0, gainPct: 0,
+        sessionsCount: 0, weeksCount: 0,
+        topSets: 0, topReps: 0,
+        totalVolume: 0, meanRpe: 0,
+        prSession: null, prDateLabel: '—',
+        rangeStart: null, rangeEnd: null,
+        rangeLabel: '—',
+      };
+    }
+    const pr = Math.max(...sessions.map((s) => s.weight_kg || 0));
+    const start = sessions[0].weight_kg || 0;
+    const gain = pr - start;
+    const gainPct = start > 0 ? Math.round((gain / start) * 100) : 0;
+    const totalVolume = sessions.reduce(
+      (a, s) => a + (s.weight_kg || 0) * (s.reps || 0) * (s.sets || 1),
+      0
+    );
+    const rpeValues = sessions.map((s) => s.rpe).filter((v) => v != null && !isNaN(v));
+    const meanRpe = rpeValues.length ? rpeValues.reduce((a, b) => a + b, 0) / rpeValues.length : 0;
+    const prSession = sessions.find((s) => s.weight_kg === pr) || null;
+    const rangeStart = new Date(sessions[0].date);
+    const rangeEnd = new Date(sessions[sessions.length - 1].date);
+    const weeksCount = Math.max(
+      1,
+      Math.round((rangeEnd - rangeStart) / (1000 * 60 * 60 * 24 * 7))
+    );
+    return {
+      pr,
+      start,
+      gain,
+      gainPct,
+      sessionsCount: sessions.length,
+      weeksCount,
+      topSets: prSession?.sets ?? 0,
+      topReps: prSession?.reps ?? 0,
+      totalVolume,
+      meanRpe,
+      prSession,
+      prDateLabel: formatDateMonShort(prSession?.date),
+      rangeStart,
+      rangeEnd,
+      rangeLabel: formatRangeLabel(rangeStart, rangeEnd),
+    };
+  }, [sessions]);
+
+  if (!config) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: APP_COLORS.background,
+        fontFamily: FONT_SANS,
+        color: APP_COLORS.textLight,
+      }}>
+        Unknown muscle.
+      </div>
+    );
+  }
+
+  const handlePickMuscle = (next) => {
+    if (next === muscle) return;
+    if (navigateToMuscle) navigateToMuscle(next);
+  };
+
+  const exerciseLower = config.exercise.toLowerCase();
 
   return (
     <div style={{
       minHeight: '100vh',
       background: APP_COLORS.background,
-      padding: '0 0 60px 0',
-      fontFamily: "'DM Sans', sans-serif",
+      color: APP_COLORS.text,
+      fontFamily: FONT_SANS,
+      borderTop: `3px solid ${color}`,
+      display: 'flex',
+      flexDirection: 'column',
     }}>
 
-      {/* Header */}
+      {/* RULE BAR */}
       <div style={{
-        background: APP_COLORS.background,
-        borderBottom: `1px solid ${APP_COLORS.border}`,
-        padding: isMobile ? '16px 16px 14px' : '24px 40px 20px',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: '12px',
-        flexWrap: 'wrap',
+        borderBottom: `1px solid ${APP_COLORS.text}`,
+        padding: isMobile ? '12px 16px' : '14px 28px',
+        gap: 14,
+        flexWrap: isMobile ? 'wrap' : 'nowrap',
       }}>
         <button
           onClick={onBack}
           style={{
-            background: APP_COLORS.cardBackground,
+            background: 'transparent',
             border: `1px solid ${APP_COLORS.border}`,
-            borderRadius: '10px',
-            padding: '8px 18px',
+            padding: '6px 10px',
             cursor: 'pointer',
-            fontSize: '14px',
-            fontWeight: '600',
+            borderRadius: 2,
+            fontSize: 11,
+            fontWeight: 700,
+            letterSpacing: '0.04em',
             color: APP_COLORS.text,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
+            fontFamily: FONT_SANS,
           }}
         >
-          ← Back
+          ← ATLAS
         </button>
 
-        <div style={{ textAlign: 'center', flex: 1, minWidth: '200px' }}>
-          <div style={{
-            fontSize: '11px',
-            fontWeight: '600',
-            color: APP_COLORS.textLight,
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-            marginBottom: '2px',
-          }}>
-            Compare Muscles
-          </div>
-          <div style={{
-            fontSize: isMobile ? '20px' : '26px',
-            fontWeight: '800',
-            color: APP_COLORS.text,
-          }}>
-            Training Dashboard
-          </div>
-        </div>
-
-        <ViewToggle view={view} onChange={setView} />
-      </div>
-
-      <div style={{ padding: isMobile ? '16px 12px' : '24px 32px', maxWidth: '1400px', margin: '0 auto' }}>
-
-        {/* Muscle multi-select */}
-        <div style={{ marginBottom: '8px' }}>
-          <div style={{
-            fontSize: '11px',
-            fontWeight: '600',
-            color: APP_COLORS.textLight,
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-            marginBottom: '8px',
-          }}>
-            Muscles ({selectedList.length} selected)
-          </div>
-          <MuscleTogglePills
-            allMuscles={allMuscles}
-            selectedMuscles={selectedMuscles}
-            onToggle={toggleMuscle}
-          />
-        </div>
-
-        {/* Stats per selected muscle */}
-        {selectedList.length > 0 && (
-          <div style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '12px',
-            marginBottom: '20px',
-          }}>
-            {selectedList.map(muscle => (
-              <MuscleStatsCard
-                key={muscle}
-                muscle={muscle}
-                sessions={getSessionsForMuscle(muscle)}
-              />
-            ))}
-          </div>
+        {!isMobile && (
+          <>
+            <Eyebrow color={APP_COLORS.textLight}>Detail · Gym Progress Atlas</Eyebrow>
+            <span style={{ color: APP_COLORS.borderStrong }}>/</span>
+            <Eyebrow color={color}>{config.label}</Eyebrow>
+          </>
         )}
 
-        {/* Tableau dashboard embed */}
-        <div style={{ ...cardStyle, padding: 0, overflow: 'hidden' }}>
-          {selectedList.length === 0 ? (
-            <div style={{
-              padding: '60px 24px',
-              textAlign: 'center',
-              color: APP_COLORS.textLight,
-              fontSize: '14px',
+        <div style={{ flex: 1 }} />
+
+        <MusclePicker muscle={muscle} onChange={handlePickMuscle} />
+
+        {!isMobile && (
+          <>
+            <VRule height={24} />
+            <Eyebrow>Range</Eyebrow>
+            <MonoNum style={{ fontSize: 11.5, fontWeight: 600, color: APP_COLORS.text }}>
+              {derived.rangeLabel}
+            </MonoNum>
+          </>
+        )}
+      </div>
+
+      {/* HERO */}
+      <div style={{
+        padding: isMobile ? '20px 16px' : '28px 28px 24px',
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr' : '1fr auto',
+        gap: isMobile ? 20 : 28,
+        alignItems: 'flex-end',
+        borderBottom: `1px solid ${APP_COLORS.text}`,
+      }}>
+        <div>
+          <Eyebrow color={color}>Detail · Single muscle</Eyebrow>
+          <div style={{
+            display: 'flex',
+            alignItems: 'baseline',
+            gap: 14,
+            marginTop: 4,
+            flexWrap: 'wrap',
+          }}>
+            <h1 style={{
+              margin: 0,
+              fontSize: isMobile ? 40 : 56,
+              fontWeight: 800,
+              letterSpacing: '-0.03em',
+              lineHeight: 0.95,
+              color: APP_COLORS.text,
             }}>
-              Select at least one muscle above to view the dashboard.
+              {config.label}
+            </h1>
+            <div style={{
+              fontSize: 14,
+              fontWeight: 600,
+              color: APP_COLORS.textLight,
+              padding: '4px 10px',
+              border: `1px solid ${APP_COLORS.border}`,
+              borderRadius: 4,
+              background: APP_COLORS.cardBackground,
+            }}>
+              {config.exercise}
             </div>
-          ) : (
+          </div>
+          <p style={{
+            margin: '10px 0 0',
+            fontSize: 13,
+            color: APP_COLORS.textLight,
+            maxWidth: 540,
+            lineHeight: 1.5,
+          }}>
+            Top-set load, session presence, and proximity to true failure — {derived.weeksCount} weeks, {derived.sessionsCount} sessions on {exerciseLower}.
+          </p>
+        </div>
+
+        <div style={{
+          display: 'flex',
+          alignItems: 'flex-end',
+          gap: 24,
+          flexWrap: 'wrap',
+        }}>
+          <div>
+            <Eyebrow>Personal Record</Eyebrow>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginTop: 2 }}>
+              <span style={{
+                fontSize: isMobile ? 56 : 72,
+                fontWeight: 800,
+                color,
+                letterSpacing: '-0.04em',
+                lineHeight: 0.85,
+              }}>
+                <MonoNum>{pickNumber(derived.pr, 1)}</MonoNum>
+              </span>
+              <span style={{ fontSize: 16, color: APP_COLORS.textLight, fontWeight: 700 }}>kg</span>
+            </div>
+          </div>
+          <VRule height={64} />
+          <div>
+            <Eyebrow>Total gain</Eyebrow>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginTop: 2 }}>
+              <span style={{
+                fontSize: isMobile ? 30 : 38,
+                fontWeight: 800,
+                color,
+                letterSpacing: '-0.03em',
+                lineHeight: 0.95,
+              }}>
+                +<MonoNum>{derived.gainPct}</MonoNum>%
+              </span>
+              <span style={{ fontSize: 13, color: APP_COLORS.textLight, fontWeight: 700 }}>
+                (+{pickNumber(derived.gain, 1)}kg)
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* KPI STRIP */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: isMobile ? 'repeat(4, 1fr)' : 'repeat(8, 1fr)',
+        rowGap: isMobile ? 16 : 0,
+        columnGap: 0,
+        padding: isMobile ? '14px 16px' : '14px 28px',
+        borderBottom: `1px solid ${APP_COLORS.text}`,
+      }}>
+        <KPI label="Start" value={pickNumber(derived.start, 1)} unit="kg" />
+        <KPI label="PR" value={pickNumber(derived.pr, 1)} unit="kg" color={color} />
+        <KPI label="Gain" value={`+${derived.gainPct}`} unit="%" color={color} />
+        <KPI label="Sessions" value={derived.sessionsCount} />
+        <KPI label="Top set" value={`${derived.topSets || 0}×${derived.topReps || 0}`} />
+        <KPI label="Total volume" value={(derived.totalVolume / 1000).toFixed(1)} unit="·10³ kg" />
+        <KPI label="Mean RPE" value={derived.meanRpe.toFixed(1)} />
+        <KPI label="PR date" value={derived.prDateLabel} />
+      </div>
+
+      {/* TABLEAU VIEWPORT */}
+      <div style={{
+        flex: 1,
+        background: APP_COLORS.cardBackground,
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: 0,
+      }}>
+        <div style={{
+          flex: 1,
+          padding: isMobile ? '14px 16px' : '16px 24px',
+          minHeight: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 12,
+        }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 12,
+            flexWrap: 'wrap',
+          }}>
+            <div>
+              <Eyebrow color={color}>tableau · gym_{view} · {muscle.toLowerCase()}</Eyebrow>
+              <div style={{ fontSize: 16, fontWeight: 700, marginTop: 2 }}>
+                {view === 'normal'
+                  ? 'Weight progression & training consistency'
+                  : 'Proximity to failure'}
+              </div>
+            </div>
+            <ViewToggle view={view} onChange={setView} />
+          </div>
+
+          <div style={{
+            flex: 1,
+            background: APP_COLORS.background,
+            border: `1px solid ${APP_COLORS.border}`,
+            borderRadius: 2,
+            padding: 12,
+            minHeight: isMobile ? 480 : 560,
+            overflow: 'hidden',
+          }}>
             <tableau-viz
-              key={`${view}-${filterValue}`}
-              src={tableauSrc}
+              key={`${view}-${muscle}`}
+              src={TABLEAU_VIEWS[view]}
               width="100%"
-              height={isMobile ? '600' : '800'}
+              height={isMobile ? '460' : '720'}
               hide-tabs
               toolbar="hidden"
             >
-              <viz-filter field="Muscle Group" value={filterValue} />
+              <viz-filter field="Muscle Group" value={muscle} />
             </tableau-viz>
-          )}
+          </div>
         </div>
-
       </div>
     </div>
   );

@@ -30,6 +30,7 @@ export function useGymData() {
           date: row.date,
           weight_kg: row.weight_kg,
           reps: row.reps,
+          sets: row.sets,
           rpe: row.rpe,
           rir: row.rir,
           session_duration_minutes: row.session_duration_minutes,
