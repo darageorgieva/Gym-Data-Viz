@@ -387,15 +387,13 @@ export default function MuscleDashboard({ initialMuscle, getSessionsForMuscle, n
       {/* KPI STRIP */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: isMobile ? 'repeat(4, 1fr)' : 'repeat(8, 1fr)',
+        gridTemplateColumns: isMobile ? 'repeat(3, 1fr)' : 'repeat(6, 1fr)',
         rowGap: isMobile ? 16 : 0,
         columnGap: 0,
         padding: isMobile ? '14px 16px' : '14px 28px',
         borderBottom: `1px solid ${APP_COLORS.text}`,
       }}>
         <KPI label="Start" value={pickNumber(derived.start, 1)} unit="kg" />
-        <KPI label="PR" value={pickNumber(derived.pr, 1)} unit="kg" color={color} />
-        <KPI label="Gain" value={`+${derived.gainPct}`} unit="%" color={color} />
         <KPI label="Sessions" value={derived.sessionsCount} />
         <KPI label="Top set" value={`${derived.topSets || 0}×${derived.topReps || 0}`} />
         <KPI label="Total volume" value={(derived.totalVolume / 1000).toFixed(1)} unit="·10³ kg" />
