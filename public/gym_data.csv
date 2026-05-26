@@ -27,13 +27,6 @@
 2024-10-07,Quads,Leg Extension,45,8,1,6,4,68
 2024-10-07,Quads,Leg Extension,45,7,2,6,3,68
 2024-10-07,Triceps,Tricep Pushdown,20,10,1,6,4,68
-2024-10-09,Shoulders,Shoulder Press,35,7,1,9,0,56
-2024-10-09,Chest,Pec Deck,25,12,1,8,2,56
-2024-10-09,Biceps,Dumbbell Curl,20,8,1,8,2,56
-2024-10-09,Abs,Cable Crunch,30,12,1,8,1,56
-2024-10-09,Quads,Leg Extension,45,6,1,7,1,56
-2024-10-09,Quads,Leg Extension,45,4,2,7,0,56
-2024-10-09,Triceps,Tricep Pushdown,20,7,1,8,2,56
 2024-10-10,Traps,Chest Supported Row,30,7,1,9,0,55
 2024-10-10,Lats,Lat Pulldown,36.25,7,1,8,1,55
 2024-10-10,Rear Delts,Rear Delt Pec Deck,20,12,1,9,0,55
@@ -62,13 +55,6 @@
 2024-10-15,Quads,Leg Extension,47.5,7,1,8,2,42
 2024-10-15,Quads,Leg Extension,47.5,5,2,9,1,42
 2024-10-15,Triceps,Tricep Pushdown,20,9,1,10,0,42
-2024-10-17,Shoulders,Shoulder Press,35,7,1,8,2,62
-2024-10-17,Chest,Pec Deck,26.25,10,1,10,1,62
-2024-10-17,Biceps,Dumbbell Curl,21.25,9,1,10,0,62
-2024-10-17,Abs,Cable Crunch,31.25,9,1,10,0,62
-2024-10-17,Quads,Leg Extension,47.5,7,1,10,0,62
-2024-10-17,Quads,Leg Extension,47.5,6,2,10,0,62
-2024-10-17,Triceps,Tricep Pushdown,21.25,6,1,8,2,62
 2024-10-18,Traps,Chest Supported Row,30,7,1,10,0,38
 2024-10-18,Lats,Lat Pulldown,36.25,7,1,9,0,38
 2024-10-18,Rear Delts,Rear Delt Pec Deck,20,10,1,9,1,38
@@ -76,6 +62,13 @@
 2024-10-18,Glutes,Hip Thrust,47.5,4,2,8,1,38
 2024-10-18,Hamstrings,Seated Leg Curl,30,9,1,9,1,38
 2024-10-18,Calves,Calf Raise,40,14,1,7,1,38
+2024-10-19,Shoulders,Shoulder Press,35,9,1,8,1,45
+2024-10-19,Chest,Pec Deck,25,10,1,8,1,45
+2024-10-19,Biceps,Dumbbell Curl,21.25,6,1,8,3,45
+2024-10-19,Abs,Cable Crunch,30,12,1,8,2,45
+2024-10-19,Quads,Leg Extension,47.5,7,1,8,2,45
+2024-10-19,Quads,Leg Extension,47.5,5,2,9,1,45
+2024-10-19,Triceps,Tricep Pushdown,20,9,1,10,0,45
 2024-10-21,Traps,Chest Supported Row,30,5,1,10,0,48
 2024-10-21,Lats,Lat Pulldown,36.25,7,1,10,0,48
 2024-10-21,Rear Delts,Rear Delt Pec Deck,22.5,7,1,10,0,48
@@ -90,13 +83,6 @@
 2024-10-23,Quads,Leg Extension,51.25,3,1,8,0,65
 2024-10-23,Quads,Leg Extension,51.25,3,2,9,0,65
 2024-10-23,Triceps,Tricep Pushdown,21.25,7,1,10,0,65
-2024-10-25,Shoulders,Shoulder Press,36.25,6,1,10,0,52
-2024-10-25,Chest,Pec Deck,26.25,10,1,8,0,52
-2024-10-25,Biceps,Dumbbell Curl,22.5,6,1,10,0,52
-2024-10-25,Abs,Cable Crunch,32.5,7,1,9,0,52
-2024-10-25,Quads,Leg Extension,51.25,4,1,10,0,52
-2024-10-25,Quads,Leg Extension,51.25,3,2,10,0,52
-2024-10-25,Triceps,Tricep Pushdown,21.25,7,1,8,1,52
 2024-10-26,Traps,Chest Supported Row,30,7,1,8,2,71
 2024-10-26,Lats,Lat Pulldown,37.5,5,1,9,0,71
 2024-10-26,Rear Delts,Rear Delt Pec Deck,22.5,10,1,8,0,71
@@ -125,13 +111,6 @@
 2024-10-31,Quads,Leg Extension,51.25,9,1,8,1,61
 2024-10-31,Quads,Leg Extension,51.25,8,2,8,0,61
 2024-10-31,Triceps,Tricep Pushdown,20,11,1,9,0,61
-2024-11-02,Shoulders,Shoulder Press,35,8,1,7,2,55
-2024-11-02,Chest,Pec Deck,25,11,1,10,0,55
-2024-11-02,Biceps,Dumbbell Curl,22.5,9,1,7,2,55
-2024-11-02,Abs,Cable Crunch,31.25,12,1,7,2,55
-2024-11-02,Quads,Leg Extension,53.75,5,1,6,4,55
-2024-11-02,Quads,Leg Extension,53.75,6,2,6,3,55
-2024-11-02,Triceps,Tricep Pushdown,20,10,1,7,2,55
 2024-11-03,Traps,Chest Supported Row,30,7,1,7,1,70
 2024-11-03,Lats,Lat Pulldown,37.5,9,1,7,2,70
 2024-11-03,Rear Delts,Rear Delt Pec Deck,22.5,12,1,6,2,70
@@ -181,20 +160,13 @@
 2024-11-16,Quads,Leg Extension,47.5,6,1,9,0,56
 2024-11-16,Quads,Leg Extension,47.5,7,2,9,0,56
 2024-11-16,Triceps,Tricep Pushdown,23.75,6,1,9,0,56
-2024-11-18,Shoulders,Shoulder Press,40,6,1,10,0,60
-2024-11-18,Chest,Pec Deck,28.75,8,1,9,0,60
-2024-11-18,Biceps,Dumbbell Curl,23.75,5,1,10,0,60
-2024-11-18,Abs,Cable Crunch,36.25,8,1,10,0,60
-2024-11-18,Quads,Leg Extension,53.75,4,1,10,0,60
-2024-11-18,Quads,Leg Extension,53.75,3,2,10,0,60
-2024-11-18,Triceps,Tricep Pushdown,23.75,6,1,10,0,60
-2024-11-19,Traps,Chest Supported Row,30,7,1,8,0,66
-2024-11-19,Lats,Lat Pulldown,37.5,8,1,9,0,66
-2024-11-19,Rear Delts,Rear Delt Pec Deck,20,10,1,9,0,66
-2024-11-19,Glutes,Hip Thrust,50,5,1,10,0,66
-2024-11-19,Glutes,Hip Thrust,50,3,2,10,0,66
-2024-11-19,Hamstrings,Seated Leg Curl,27.5,6,1,9,0,66
-2024-11-19,Calves,Calf Raise,43.75,10,1,10,0,66
+2024-11-17,Traps,Chest Supported Row,30,7,1,8,0,66
+2024-11-17,Lats,Lat Pulldown,37.5,8,1,9,0,66
+2024-11-17,Rear Delts,Rear Delt Pec Deck,20,10,1,9,0,66
+2024-11-17,Glutes,Hip Thrust,50,5,1,10,0,66
+2024-11-17,Glutes,Hip Thrust,50,3,2,10,0,66
+2024-11-17,Hamstrings,Seated Leg Curl,27.5,6,1,9,0,66
+2024-11-17,Calves,Calf Raise,43.75,10,1,10,0,66
 2024-11-21,Shoulders,Shoulder Press,40,5,1,9,0,68
 2024-11-21,Chest,Pec Deck,28.75,11,1,9,0,68
 2024-11-21,Biceps,Dumbbell Curl,23.75,7,1,9,1,68
@@ -216,27 +188,27 @@
 2024-11-24,Quads,Leg Extension,56.25,7,1,9,0,65
 2024-11-24,Quads,Leg Extension,56.25,6,2,9,0,65
 2024-11-24,Triceps,Tricep Pushdown,23.75,7,1,10,0,65
-2024-11-26,Shoulders,Shoulder Press,40,10,1,8,2,66
-2024-11-26,Chest,Pec Deck,25,13,1,10,0,66
-2024-11-26,Biceps,Dumbbell Curl,26.25,8,1,8,2,66
-2024-11-26,Abs,Cable Crunch,36.25,10,1,8,2,66
-2024-11-26,Quads,Leg Extension,56.25,7,1,9,1,66
-2024-11-26,Quads,Leg Extension,56.25,7,2,9,0,66
-2024-11-26,Triceps,Tricep Pushdown,23.75,9,1,9,0,66
-2024-11-27,Traps,Chest Supported Row,30,9,1,8,0,54
-2024-11-27,Lats,Lat Pulldown,37.5,9,1,9,0,54
-2024-11-27,Rear Delts,Rear Delt Pec Deck,30,10,1,7,2,54
-2024-11-27,Glutes,Hip Thrust,55,6,1,8,1,54
-2024-11-27,Glutes,Hip Thrust,55,4,2,8,0,54
-2024-11-27,Hamstrings,Seated Leg Curl,30,7,1,9,0,54
-2024-11-27,Calves,Calf Raise,43.75,15,1,8,2,54
-2024-11-29,Shoulders,Shoulder Press,40,8,1,8,0,70
-2024-11-29,Chest,Pec Deck,25,12,1,10,0,70
-2024-11-29,Biceps,Dumbbell Curl,26.25,9,1,7,2,70
-2024-11-29,Abs,Cable Crunch,35,12,1,10,1,70
-2024-11-29,Quads,Leg Extension,56.25,9,1,9,0,70
-2024-11-29,Quads,Leg Extension,56.25,8,2,10,0,70
-2024-11-29,Triceps,Tricep Pushdown,23.75,10,1,9,1,70
+2024-11-25,Traps,Chest Supported Row,30,9,1,8,0,54
+2024-11-25,Lats,Lat Pulldown,37.5,9,1,9,0,54
+2024-11-25,Rear Delts,Rear Delt Pec Deck,30,10,1,7,2,54
+2024-11-25,Glutes,Hip Thrust,55,6,1,8,1,54
+2024-11-25,Glutes,Hip Thrust,55,4,2,8,0,54
+2024-11-25,Hamstrings,Seated Leg Curl,30,7,1,9,0,54
+2024-11-25,Calves,Calf Raise,43.75,15,1,8,2,54
+2024-11-27,Shoulders,Shoulder Press,40,8,1,8,0,70
+2024-11-27,Chest,Pec Deck,25,12,1,10,0,70
+2024-11-27,Biceps,Dumbbell Curl,26.25,9,1,7,2,70
+2024-11-27,Abs,Cable Crunch,35,12,1,10,1,70
+2024-11-27,Quads,Leg Extension,56.25,9,1,9,0,70
+2024-11-27,Quads,Leg Extension,56.25,8,2,10,0,70
+2024-11-27,Triceps,Tricep Pushdown,23.75,10,1,9,1,70
+2024-11-28,Traps,Chest Supported Row,30.00,6,1,6,4,45
+2024-11-28,Lats,Lat Pulldown,37.5,12,1,8,2,45
+2024-11-28,Rear Delts,Rear Delt Pec Deck,30,12,1,6,4,45
+2024-11-28,Glutes,Hip Thrust,55,9,1,7,2,45
+2024-11-28,Glutes,Hip Thrust,55,7,2,8,1,45
+2024-11-28,Hamstrings,Seated Leg Curl,30.00,8,1,6,3,45
+2024-11-28,Calves,Calf Raise,50,10,1,7,2,45
 2024-11-30,Traps,Chest Supported Row,31.25,5,1,6,4,45
 2024-11-30,Lats,Lat Pulldown,37.5,11,1,8,2,45
 2024-11-30,Rear Delts,Rear Delt Pec Deck,30,10,1,6,4,45
@@ -251,13 +223,6 @@
 2024-12-02,Quads,Leg Extension,60,6,1,6,2,43
 2024-12-02,Quads,Leg Extension,60,5,2,6,1,43
 2024-12-02,Triceps,Tricep Pushdown,23.75,10,1,6,3,43
-2024-12-04,Shoulders,Shoulder Press,36.25,8,1,8,1,49
-2024-12-04,Chest,Pec Deck,30,9,1,9,1,49
-2024-12-04,Biceps,Dumbbell Curl,26.25,8,1,8,0,49
-2024-12-04,Abs,Cable Crunch,36.25,8,1,9,0,49
-2024-12-04,Quads,Leg Extension,60,6,1,8,2,49
-2024-12-04,Quads,Leg Extension,60,4,2,8,1,49
-2024-12-04,Triceps,Tricep Pushdown,25,8,1,7,2,49
 2024-12-05,Traps,Chest Supported Row,33.75,4,1,9,1,41
 2024-12-05,Lats,Lat Pulldown,40,5,1,9,1,41
 2024-12-05,Rear Delts,Rear Delt Pec Deck,30,11,1,10,1,41
@@ -286,20 +251,27 @@
 2024-12-10,Quads,Leg Extension,53.75,7,1,7,3,49
 2024-12-10,Quads,Leg Extension,53.75,6,2,8,2,49
 2024-12-10,Triceps,Tricep Pushdown,27.5,8,1,8,0,49
-2024-12-12,Shoulders,Shoulder Press,36.25,7,1,9,0,72
-2024-12-12,Chest,Pec Deck,30,12,1,8,0,72
-2024-12-12,Biceps,Dumbbell Curl,27.5,8,1,9,0,72
-2024-12-12,Abs,Cable Crunch,40,9,1,7,2,72
-2024-12-12,Quads,Leg Extension,53.75,7,1,9,0,72
-2024-12-12,Quads,Leg Extension,53.75,6,2,9,0,72
-2024-12-12,Triceps,Tricep Pushdown,27.5,9,1,8,2,72
-2024-12-13,Traps,Chest Supported Row,33.75,7,1,7,2,71
-2024-12-13,Lats,Lat Pulldown,42.5,7,1,7,3,71
-2024-12-13,Rear Delts,Rear Delt Pec Deck,32.5,11,1,8,1,71
-2024-12-13,Glutes,Hip Thrust,57.5,7,1,9,0,71
-2024-12-13,Glutes,Hip Thrust,57.5,7,2,10,0,71
-2024-12-13,Hamstrings,Seated Leg Curl,32.5,8,1,10,0,71
-2024-12-13,Calves,Calf Raise,53.75,11,1,8,1,71
+2024-12-11,Traps,Chest Supported Row,35.75,5,1,8,2,40
+2024-12-11,Lats,Lat Pulldown,45,5,1,7,2,40
+2024-12-11,Rear Delts,Rear Delt Pec Deck,30,10,1,9,1,40
+2024-12-11,Glutes,Hip Thrust,57.5,6,1,8,0,40
+2024-12-11,Glutes,Hip Thrust,57.5,5,2,9,1,40
+2024-12-11,Hamstrings,Seated Leg Curl,32.5,9,1,8,1,40
+2024-12-11,Calves,Calf Raise,53.75,8,1,10,0,40
+2024-12-13,Shoulders,Shoulder Press,36.25,7,1,9,0,72
+2024-12-13,Chest,Pec Deck,30,12,1,8,0,72
+2024-12-13,Biceps,Dumbbell Curl,27.5,8,1,9,0,72
+2024-12-13,Abs,Cable Crunch,40,9,1,7,2,72
+2024-12-13,Quads,Leg Extension,53.75,7,1,9,0,72
+2024-12-13,Quads,Leg Extension,53.75,6,2,9,0,72
+2024-12-13,Triceps,Tricep Pushdown,27.5,9,1,8,2,72
+2024-12-14,Traps,Chest Supported Row,33.75,7,1,7,2,71
+2024-12-14,Lats,Lat Pulldown,42.5,7,1,7,3,71
+2024-12-14,Rear Delts,Rear Delt Pec Deck,32.5,11,1,8,1,71
+2024-12-14,Glutes,Hip Thrust,57.5,7,1,9,0,71
+2024-12-14,Glutes,Hip Thrust,57.5,7,2,10,0,71
+2024-12-14,Hamstrings,Seated Leg Curl,32.5,8,1,10,0,71
+2024-12-14,Calves,Calf Raise,53.75,11,1,8,1,71
 2024-12-16,Traps,Chest Supported Row,33.75,6,1,8,1,51
 2024-12-16,Lats,Lat Pulldown,42.5,8,1,10,0,51
 2024-12-16,Rear Delts,Rear Delt Pec Deck,32.5,7,1,10,0,51
@@ -314,27 +286,20 @@
 2024-12-18,Quads,Leg Extension,60,3,1,9,1,58
 2024-12-18,Quads,Leg Extension,60,3,2,9,0,58
 2024-12-18,Triceps,Tricep Pushdown,27.5,7,1,10,0,58
-2024-12-20,Shoulders,Shoulder Press,41.25,5,1,9,0,50
-2024-12-20,Chest,Pec Deck,28.75,8,1,9,1,50
-2024-12-20,Biceps,Dumbbell Curl,23.75,7,1,9,0,50
-2024-12-20,Abs,Cable Crunch,41.25,7,1,9,0,50
-2024-12-20,Quads,Leg Extension,62.5,4,1,9,1,50
-2024-12-20,Quads,Leg Extension,62.5,3,2,9,0,50
-2024-12-20,Triceps,Tricep Pushdown,27.5,7,1,9,0,50
-2024-12-21,Traps,Chest Supported Row,33.75,8,1,6,3,61
-2024-12-21,Lats,Lat Pulldown,42.5,8,1,7,1,61
-2024-12-21,Rear Delts,Rear Delt Pec Deck,32.5,12,1,7,2,61
-2024-12-21,Glutes,Hip Thrust,60,6,1,7,1,61
-2024-12-21,Glutes,Hip Thrust,60,5,2,7,0,61
-2024-12-21,Hamstrings,Seated Leg Curl,35,7,1,7,2,61
-2024-12-21,Calves,Calf Raise,56.25,12,1,8,1,61
-2024-12-23,Shoulders,Shoulder Press,41.25,6,1,7,2,50
-2024-12-23,Chest,Pec Deck,28.75,13,1,8,2,50
-2024-12-23,Biceps,Dumbbell Curl,27.5,9,1,8,1,50
-2024-12-23,Abs,Cable Crunch,41.25,10,1,10,0,50
-2024-12-23,Quads,Leg Extension,62.5,7,1,8,1,50
-2024-12-23,Quads,Leg Extension,62.5,4,2,9,0,50
-2024-12-23,Triceps,Tricep Pushdown,28.75,9,1,8,2,50
+2024-12-19,Traps,Chest Supported Row,33.75,8,1,6,3,61
+2024-12-19,Lats,Lat Pulldown,42.5,8,1,7,1,61
+2024-12-19,Rear Delts,Rear Delt Pec Deck,32.5,12,1,7,2,61
+2024-12-19,Glutes,Hip Thrust,60,6,1,7,1,61
+2024-12-19,Glutes,Hip Thrust,60,5,2,7,0,61
+2024-12-19,Hamstrings,Seated Leg Curl,35,7,1,7,2,61
+2024-12-19,Calves,Calf Raise,56.25,12,1,8,1,61
+2024-12-21,Shoulders,Shoulder Press,41.25,5,1,9,0,50
+2024-12-21,Chest,Pec Deck,28.75,8,1,9,1,50
+2024-12-21,Biceps,Dumbbell Curl,23.75,7,1,9,0,50
+2024-12-21,Abs,Cable Crunch,41.25,7,1,9,0,50
+2024-12-21,Quads,Leg Extension,62.5,4,1,9,1,50
+2024-12-21,Quads,Leg Extension,62.5,3,2,9,0,50
+2024-12-21,Triceps,Tricep Pushdown,27.5,7,1,9,0,50
 2024-12-24,Traps,Chest Supported Row,33.75,8,1,8,0,39
 2024-12-24,Lats,Lat Pulldown,42.5,10,1,8,1,39
 2024-12-24,Rear Delts,Rear Delt Pec Deck,32.5,12,1,7,3,39
@@ -349,20 +314,6 @@
 2024-12-26,Quads,Leg Extension,65,6,1,10,1,47
 2024-12-26,Quads,Leg Extension,65,4,2,10,0,47
 2024-12-26,Triceps,Tricep Pushdown,28.75,10,1,9,0,47
-2024-12-28,Shoulders,Shoulder Press,41.25,9,1,8,1,68
-2024-12-28,Chest,Pec Deck,28.75,12,1,9,1,68
-2024-12-28,Biceps,Dumbbell Curl,28.75,10,1,8,1,68
-2024-12-28,Abs,Cable Crunch,37.5,9,1,9,1,68
-2024-12-28,Quads,Leg Extension,65,7,1,9,0,68
-2024-12-28,Quads,Leg Extension,65,6,2,9,0,68
-2024-12-28,Triceps,Tricep Pushdown,27.5,10,1,8,2,68
-2024-12-31,Shoulders,Shoulder Press,42.5,8,1,6,3,64
-2024-12-31,Chest,Pec Deck,31.25,11,1,6,2,64
-2024-12-31,Biceps,Dumbbell Curl,28.75,10,1,6,3,64
-2024-12-31,Abs,Cable Crunch,37.5,13,1,7,1,64
-2024-12-31,Quads,Leg Extension,60,7,1,9,1,64
-2024-12-31,Quads,Leg Extension,60,5,2,9,1,64
-2024-12-31,Triceps,Tricep Pushdown,27.5,12,1,6,4,64
 2025-01-01,Traps,Chest Supported Row,31.25,7,1,10,0,40
 2025-01-01,Lats,Lat Pulldown,37.5,5,1,10,1,40
 2025-01-01,Rear Delts,Rear Delt Pec Deck,30,10,1,9,0,40
@@ -377,41 +328,41 @@
 2025-01-03,Quads,Leg Extension,60,7,1,8,2,49
 2025-01-03,Quads,Leg Extension,60,5,2,9,1,49
 2025-01-03,Triceps,Tricep Pushdown,27.5,9,1,8,0,49
-2025-01-05,Shoulders,Shoulder Press,40,7,1,8,1,54
-2025-01-05,Chest,Pec Deck,33.75,9,1,8,1,54
-2025-01-05,Biceps,Dumbbell Curl,27.5,7,1,10,0,54
-2025-01-05,Abs,Cable Crunch,41.25,9,1,9,0,54
-2025-01-05,Quads,Leg Extension,65,4,1,8,2,54
-2025-01-05,Quads,Leg Extension,65,3,2,9,1,54
-2025-01-05,Triceps,Tricep Pushdown,28.75,8,1,8,2,54
-2025-01-06,Traps,Chest Supported Row,31.25,6,1,9,0,72
-2025-01-06,Lats,Lat Pulldown,37.5,6,1,8,1,72
-2025-01-06,Rear Delts,Rear Delt Pec Deck,30,11,1,10,0,72
-2025-01-06,Glutes,Hip Thrust,55,6,1,9,0,72
-2025-01-06,Glutes,Hip Thrust,55,5,2,9,0,72
-2025-01-06,Hamstrings,Seated Leg Curl,35,8,1,9,1,72
-2025-01-06,Calves,Calf Raise,56.25,10,1,9,1,72
-2025-01-08,Shoulders,Shoulder Press,40,5,1,8,2,43
-2025-01-08,Chest,Pec Deck,33.75,11,1,8,2,43
-2025-01-08,Biceps,Dumbbell Curl,27.5,10,1,9,0,43
-2025-01-08,Abs,Cable Crunch,42.5,8,1,8,0,43
-2025-01-08,Quads,Leg Extension,68.75,5,1,8,0,43
-2025-01-08,Quads,Leg Extension,68.75,4,2,9,0,43
-2025-01-08,Triceps,Tricep Pushdown,28.75,10,1,9,0,43
-2025-01-09,Traps,Chest Supported Row,31.25,7,1,8,1,42
-2025-01-09,Lats,Lat Pulldown,42.5,7,1,10,1,42
-2025-01-09,Rear Delts,Rear Delt Pec Deck,30,10,1,10,1,42
-2025-01-09,Glutes,Hip Thrust,60,5,1,9,1,42
-2025-01-09,Glutes,Hip Thrust,60,3,2,9,0,42
-2025-01-09,Hamstrings,Seated Leg Curl,32.5,7,1,10,0,42
-2025-01-09,Calves,Calf Raise,60,10,1,10,1,42
-2025-01-11,Shoulders,Shoulder Press,40,6,1,9,0,71
-2025-01-11,Chest,Pec Deck,33.75,12,1,9,1,71
-2025-01-11,Biceps,Dumbbell Curl,28.75,7,1,8,1,71
-2025-01-11,Abs,Cable Crunch,42.5,9,1,8,1,71
-2025-01-11,Quads,Leg Extension,68.75,6,1,7,1,71
-2025-01-11,Quads,Leg Extension,68.75,5,2,8,0,71
-2025-01-11,Triceps,Tricep Pushdown,28.75,9,1,9,0,71
+2025-01-04,Traps,Chest Supported Row,30.00,6,1,9,0,72
+2025-01-04,Lats,Lat Pulldown,35,6,1,8,1,72
+2025-01-04,Rear Delts,Rear Delt Pec Deck,33.25,11,1,10,0,72
+2025-01-04,Glutes,Hip Thrust,57.5,6,1,9,0,72
+2025-01-04,Glutes,Hip Thrust,57.5,5,2,9,0,72
+2025-01-04,Hamstrings,Seated Leg Curl,35,10,1,9,1,72
+2025-01-04,Calves,Calf Raise,56.25,9,1,9,1,72
+2025-01-06,Shoulders,Shoulder Press,40,7,1,8,1,54
+2025-01-06,Chest,Pec Deck,33.75,9,1,8,1,54
+2025-01-06,Biceps,Dumbbell Curl,27.5,7,1,10,0,54
+2025-01-06,Abs,Cable Crunch,41.25,9,1,9,0,54
+2025-01-06,Quads,Leg Extension,65,4,1,8,2,54
+2025-01-06,Quads,Leg Extension,65,3,2,9,1,54
+2025-01-06,Triceps,Tricep Pushdown,28.75,8,1,8,2,54
+2025-01-07,Traps,Chest Supported Row,31.25,6,1,9,0,72
+2025-01-07,Lats,Lat Pulldown,37.5,6,1,8,1,72
+2025-01-07,Rear Delts,Rear Delt Pec Deck,30,11,1,10,0,72
+2025-01-07,Glutes,Hip Thrust,55,6,1,9,0,72
+2025-01-07,Glutes,Hip Thrust,55,5,2,9,0,72
+2025-01-07,Hamstrings,Seated Leg Curl,35,8,1,9,1,72
+2025-01-07,Calves,Calf Raise,56.25,10,1,9,1,72
+2025-01-09,Shoulders,Shoulder Press,40,5,1,8,2,43
+2025-01-09,Chest,Pec Deck,33.75,11,1,8,2,43
+2025-01-09,Biceps,Dumbbell Curl,28.75,8,1,9,0,43
+2025-01-09,Abs,Cable Crunch,42.5,10,1,8,0,43
+2025-01-09,Quads,Leg Extension,68.75,6,1,8,0,43
+2025-01-09,Quads,Leg Extension,68.75,5,2,9,0,43
+2025-01-09,Triceps,Tricep Pushdown,28.75,9,1,9,0,43
+2025-01-10,Traps,Chest Supported Row,31.25,7,1,8,1,42
+2025-01-10,Lats,Lat Pulldown,42.5,7,1,10,1,42
+2025-01-10,Rear Delts,Rear Delt Pec Deck,30,10,1,10,1,42
+2025-01-10,Glutes,Hip Thrust,60,5,1,9,1,42
+2025-01-10,Glutes,Hip Thrust,60,3,2,9,0,42
+2025-01-10,Hamstrings,Seated Leg Curl,32.5,7,1,10,0,42
+2025-01-10,Calves,Calf Raise,60,10,1,10,1,42
 2025-01-13,Shoulders,Shoulder Press,40,5,1,10,0,53
 2025-01-13,Chest,Pec Deck,33.75,9,1,10,0,53
 2025-01-13,Biceps,Dumbbell Curl,28.75,8,1,9,0,53
@@ -489,13 +440,6 @@
 2025-02-01,Quads,Leg Extension,68.75,8,1,7,2,53
 2025-02-01,Quads,Leg Extension,68.75,6,2,8,1,53
 2025-02-01,Triceps,Tricep Pushdown,28.75,8,1,8,2,53
-2025-02-04,Shoulders,Shoulder Press,41.25,6,1,8,1,44
-2025-02-04,Chest,Pec Deck,35,11,1,7,3,44
-2025-02-04,Biceps,Dumbbell Curl,30,9,1,9,0,44
-2025-02-04,Abs,Cable Crunch,45,8,1,8,2,44
-2025-02-04,Quads,Leg Extension,68.75,7,1,7,2,44
-2025-02-04,Quads,Leg Extension,68.75,5,2,8,1,44
-2025-02-04,Triceps,Tricep Pushdown,31.25,7,1,7,3,44
 2025-02-07,Traps,Chest Supported Row,36.25,6,1,8,1,57
 2025-02-07,Lats,Lat Pulldown,46.25,7,1,10,0,57
 2025-02-07,Rear Delts,Rear Delt Pec Deck,38.75,12,1,9,1,57
@@ -587,13 +531,6 @@
 2025-02-28,Quads,Leg Extension,73.75,9,1,7,1,52
 2025-02-28,Quads,Leg Extension,73.75,7,2,8,0,52
 2025-02-28,Triceps,Tricep Pushdown,35,8,1,9,0,52
-2025-03-02,Shoulders,Shoulder Press,45,5,1,10,0,44
-2025-03-02,Chest,Pec Deck,35,11,1,10,0,44
-2025-03-02,Biceps,Dumbbell Curl,32.5,7,1,8,0,44
-2025-03-02,Abs,Cable Crunch,47.5,9,1,9,0,44
-2025-03-02,Quads,Leg Extension,77.5,6,1,9,1,44
-2025-03-02,Quads,Leg Extension,77.5,5,2,9,0,44
-2025-03-02,Triceps,Tricep Pushdown,35,8,1,9,0,44
 2025-03-03,Traps,Chest Supported Row,36.25,4,1,8,1,45
 2025-03-03,Lats,Lat Pulldown,46.25,6,1,8,0,45
 2025-03-03,Rear Delts,Rear Delt Pec Deck,42.5,9,1,8,1,45
@@ -678,13 +615,6 @@
 2025-03-24,Quads,Leg Extension,80,10,1,6,3,68
 2025-03-24,Quads,Leg Extension,80,8,2,6,2,68
 2025-03-24,Triceps,Tricep Pushdown,37.5,8,1,6,3,68
-2025-03-26,Shoulders,Shoulder Press,50,4,1,9,0,72
-2025-03-26,Chest,Pec Deck,40,10,1,9,1,72
-2025-03-26,Biceps,Dumbbell Curl,35,9,1,10,0,72
-2025-03-26,Abs,Cable Crunch,55,7,1,8,1,72
-2025-03-26,Quads,Leg Extension,82.5,7,1,9,0,72
-2025-03-26,Quads,Leg Extension,82.5,5,2,9,0,72
-2025-03-26,Triceps,Tricep Pushdown,37.5,8,1,10,1,72
 2025-03-27,Traps,Chest Supported Row,37.5,6,1,7,2,72
 2025-03-27,Lats,Lat Pulldown,50,5,1,8,0,72
 2025-03-27,Rear Delts,Rear Delt Pec Deck,38.75,10,1,10,0,72
