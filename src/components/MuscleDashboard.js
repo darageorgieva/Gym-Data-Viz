@@ -1,115 +1,183 @@
 // ─────────────────────────────────────────────────────────────
-// COLOR VISION — data-ink minimization applied to muscle color
+// MUSCLE DASHBOARD — Direction A · "Instrument"
 //
-// Each muscle has exactly one accent color (from MUSCLE_CONFIG).
-// That color appears in precisely four places:
-//   1. The identity dot next to the muscle name in the header
-//   2. The PR number — the single most important data point
-//   3. The Total Gain value — the outcome of six months of work
-//   4. All chart data ink: line stroke, bar fill/stroke,
-//      heatmap cells, tooltip border, RIR reference line
+// Single-muscle deep readout. One muscle in focus, sourced from
+// the URL (?muscle=...). The body-map click on the landing page
+// is the primary entry; the MusclePicker in the rule bar lets
+// the user page through the other 11 muscles without losing
+// their place in browser history.
 //
-// Everywhere else — header background, card surfaces, back button,
-// arrow, section titles, ADVANCED badges, axis labels — is stone
-// neutral. These are structural elements. Giving them the muscle
-// color would make color ubiquitous and therefore meaningless.
-//
-// The principle is Tufte's data-ink ratio applied to color:
-// every instance of the accent color should encode something.
-// If you can remove a color application without losing information,
-// it should be removed. Source: Tufte (1983); Cairo (2016).
-//
-// The result is that when the viewer's eye lands on the accent
-// color anywhere on this page, it is always looking at data —
-// never at furniture. Switching muscles updates the charts and
-// the three data-ink moments above; the page layout itself
-// does not repaint.
+// Layout, top to bottom:
+//   3px accent rule  →  rule bar  →  hero  →  KPI strip
+//                                 →  view tabs (Normal / Advanced)
+//                                 →  Tableau viewport
 // ─────────────────────────────────────────────────────────────
 
-import React, { useMemo, useEffect } from 'react';
-import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  BarChart, Bar, ReferenceLine,
-} from 'recharts';
+import React, { useEffect, useMemo, useState } from 'react';
 import { MUSCLE_CONFIG, APP_COLORS } from '../config';
-import TrainingHeatmap from './TrainingHeatmap';
 import { useIsMobile } from '../useIsMobile';
+import MusclePicker from './MusclePicker';
 
-const cardStyle = {
-  background: APP_COLORS.cardBackground,
-  borderRadius: '16px',
-  padding: '24px',
-  marginBottom: '20px',
+const TABLEAU_VIEWS = {
+  normal:   'https://public.tableau.com/views/gym_normal/Normal?:language=en-GB&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link',
+  advanced: 'https://public.tableau.com/views/gym_advanced/Advanced?:language=en-GB&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link',
+  gems:     'https://public.tableau.com/views/hidden-gems_17798292209230/Sheet1?:language=en-GB&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link',
 };
 
-// PR card: neutral background, muscle color only on the number itself
-function PRBadge({ value, color }) {
+const VIEW_OPTIONS = [
+  { id: 'normal',   label: 'NORMAL' },
+  { id: 'advanced', label: 'ADVANCED' },
+  { id: 'gems',     label: 'GEMS' },
+];
+
+const VIEW_TITLES = {
+  normal:   'Weight progression & training consistency',
+  advanced: 'Proximity to failure',
+  gems:     'Hidden gems — progress without weight increase',
+};
+
+const FONT_SANS = "'DM Sans', sans-serif";
+const FONT_MONO = "'DM Mono', 'JetBrains Mono', monospace";
+
+function Eyebrow({ children, color, style }) {
   return (
     <div style={{
-      display: 'inline-flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      background: APP_COLORS.cardBackground,
-      borderRadius: '16px',
-      padding: '20px 32px',
-      minWidth: '140px',
-    }}>
-      <span style={{
-        fontSize: '13px',
-        fontWeight: '600',
-        color: APP_COLORS.textLight,
-        letterSpacing: '0.06em',
-        textTransform: 'uppercase',
-      }}>
-        Personal Record
-      </span>
-      <span style={{ fontSize: '48px', fontWeight: '800', color: color, lineHeight: 1.1 }}>
-        {value}
-      </span>
-      <span style={{ fontSize: '16px', fontWeight: '500', color: APP_COLORS.textLight }}>kg</span>
+      fontSize: 10,
+      fontWeight: 700,
+      letterSpacing: '0.14em',
+      textTransform: 'uppercase',
+      color: color || APP_COLORS.textFaint,
+      fontFamily: FONT_SANS,
+      ...style,
+    }}>{children}</div>
+  );
+}
+
+function MonoNum({ children, style }) {
+  return (
+    <span style={{
+      fontFamily: FONT_MONO,
+      fontVariantNumeric: 'tabular-nums',
+      ...style,
+    }}>{children}</span>
+  );
+}
+
+function VRule({ height, color }) {
+  return <div style={{ width: 1, height, background: color || APP_COLORS.border }} />;
+}
+
+function KPI({ label, value, unit, color }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 }}>
+      <Eyebrow>{label}</Eyebrow>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 3 }}>
+        <span style={{
+          fontSize: 22,
+          fontWeight: 800,
+          letterSpacing: '-0.02em',
+          color: color || APP_COLORS.text,
+          lineHeight: 1,
+        }}>
+          <MonoNum>{value}</MonoNum>
+        </span>
+        {unit && (
+          <span style={{ fontSize: 10, color: APP_COLORS.textFaint, fontWeight: 600 }}>{unit}</span>
+        )}
+      </div>
     </div>
   );
 }
 
-function formatDate(dateStr) {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+function ViewToggle({ view, onChange }) {
+  const baseBtn = {
+    border: 'none',
+    cursor: 'pointer',
+    padding: '8px 18px',
+    borderRadius: 8,
+    fontSize: 13,
+    fontWeight: 700,
+    letterSpacing: '0.04em',
+    transition: 'all 120ms ease',
+    fontFamily: FONT_SANS,
+  };
+  return (
+    <div style={{
+      display: 'inline-flex',
+      background: APP_COLORS.background,
+      border: `1px solid ${APP_COLORS.border}`,
+      borderRadius: 10,
+      padding: 4,
+    }}>
+      {VIEW_OPTIONS.map((opt) => {
+        const active = view === opt.id;
+        return (
+          <button
+            key={opt.id}
+            onClick={() => onChange(opt.id)}
+            style={{
+              ...baseBtn,
+              background: active ? APP_COLORS.text : 'transparent',
+              color: active ? '#FFFFFF' : APP_COLORS.textLight,
+            }}
+          >
+            {opt.label}
+          </button>
+        );
+      })}
+    </div>
+  );
 }
 
-const CustomTooltip = ({ active, payload, label, color }) => {
-  if (active && payload && payload.length) {
-    return (
-      <div style={{
-        background: '#fff',
-        border: `1.5px solid ${color}`,
-        borderRadius: '10px',
-        padding: '10px 16px',
-        fontSize: '13px',
-        color: APP_COLORS.text,
-        boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
-      }}>
-        <div style={{ fontWeight: '600', marginBottom: '4px' }}>{formatDate(label)}</div>
-        {payload.map((p, i) => (
-          <div key={i}>{p.name}: <strong>{p.value}{p.unit || ''}</strong></div>
-        ))}
-      </div>
-    );
-  }
-  return null;
-};
+// A session is a "hidden gem" if, at the same weight bucket (±0.5kg)
+// as a previous session, it scored either more work (reps × sets) or
+// a meaningfully lower RIR. The PR itself never qualifies.
+function computeHiddenGems(sessions) {
+  if (!sessions.length) return [];
+  const pr = Math.max(...sessions.map((s) => s.weight_kg || 0));
+  const bestByWeight = new Map();
+  const gems = [];
+  sessions.forEach((s, i) => {
+    const key = Math.round((s.weight_kg || 0) * 2) / 2;
+    const work = (s.reps || 0) * (s.sets || 1);
+    const isPR = s.weight_kg === pr;
+    const prev = bestByWeight.get(key);
+    if (prev && !isPR) {
+      const repsBetter = work > prev.work;
+      const rirBetter = s.rir != null && prev.rir != null && s.rir < prev.rir - 0.3;
+      if (repsBetter) gems.push({ index: i, session: s, reason: 'reps' });
+      else if (rirBetter) gems.push({ index: i, session: s, reason: 'rir' });
+    }
+    if (!prev || work > prev.work) {
+      bestByWeight.set(key, { work, rir: s.rir });
+    }
+  });
+  return gems;
+}
 
-export default function MuscleDashboard({ muscle, sessions, volumeData, muscleDates, onBack }) {
+function formatDateMonShort(dateStr) {
+  if (!dateStr) return '—';
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+}
+
+function formatRangeLabel(start, end) {
+  const fmt = (d) => d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  return `${fmt(start)} → ${fmt(end)}`;
+}
+
+function pickNumber(value, digits = 0) {
+  if (value == null || isNaN(value)) return '—';
+  return Number.isInteger(value) ? String(value) : value.toFixed(digits);
+}
+
+export default function MuscleDashboard({ initialMuscle, getSessionsForMuscle, navigateToMuscle, onBack }) {
   const isMobile = useIsMobile();
+  const muscle = initialMuscle;
   const config = MUSCLE_CONFIG[muscle];
-  const { color, colorLight, exercise, label } = config;
+  const color = config ? config.color : APP_COLORS.text;
 
-  const pr = useMemo(() => Math.max(...sessions.map(s => s.weight_kg)), [sessions]);
-  const startWeight = sessions[0]?.weight_kg || 0;
-  const totalGain = pr - startWeight;
-
-  const tickCount = 6;
-  const step = Math.floor(sessions.length / tickCount);
-  const ticks = sessions.filter((_, i) => i % step === 0).map(s => s.date);
+  const [view, setView] = useState('normal');
 
   useEffect(() => {
     if (document.querySelector('script[data-tableau-embed]')) return;
@@ -120,205 +188,367 @@ export default function MuscleDashboard({ muscle, sessions, volumeData, muscleDa
     document.head.appendChild(script);
   }, []);
 
+  const sessions = useMemo(
+    () => (muscle && getSessionsForMuscle ? getSessionsForMuscle(muscle) : []),
+    [muscle, getSessionsForMuscle]
+  );
+
+  const derived = useMemo(() => {
+    if (!sessions.length) {
+      return {
+        pr: 0, start: 0, gain: 0, gainPct: 0,
+        sessionsCount: 0, weeksCount: 0,
+        topSets: 0, topReps: 0,
+        totalVolume: 0, meanRpe: 0,
+        prSession: null, prDateLabel: '—',
+        rangeStart: null, rangeEnd: null,
+        rangeLabel: '—',
+        gemCount: 0, repsGems: 0, rirGems: 0,
+      };
+    }
+    const pr = Math.max(...sessions.map((s) => s.weight_kg || 0));
+    const start = sessions[0].weight_kg || 0;
+    const gain = pr - start;
+    const gainPct = start > 0 ? Math.round((gain / start) * 100) : 0;
+    const totalVolume = sessions.reduce(
+      (a, s) => a + (s.weight_kg || 0) * (s.reps || 0) * (s.sets || 1),
+      0
+    );
+    const rpeValues = sessions.map((s) => s.rpe).filter((v) => v != null && !isNaN(v));
+    const meanRpe = rpeValues.length ? rpeValues.reduce((a, b) => a + b, 0) / rpeValues.length : 0;
+    const prSession = sessions.find((s) => s.weight_kg === pr) || null;
+    const rangeStart = new Date(sessions[0].date);
+    const rangeEnd = new Date(sessions[sessions.length - 1].date);
+    const weeksCount = Math.max(
+      1,
+      Math.round((rangeEnd - rangeStart) / (1000 * 60 * 60 * 24 * 7))
+    );
+    const gems = computeHiddenGems(sessions);
+    return {
+      pr,
+      start,
+      gain,
+      gainPct,
+      sessionsCount: sessions.length,
+      weeksCount,
+      topSets: prSession?.sets ?? 0,
+      topReps: prSession?.reps ?? 0,
+      totalVolume,
+      meanRpe,
+      prSession,
+      prDateLabel: formatDateMonShort(prSession?.date),
+      rangeStart,
+      rangeEnd,
+      rangeLabel: formatRangeLabel(rangeStart, rangeEnd),
+      gemCount: gems.length,
+      repsGems: gems.filter((g) => g.reason === 'reps').length,
+      rirGems: gems.filter((g) => g.reason === 'rir').length,
+    };
+  }, [sessions]);
+
+  if (!config) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: APP_COLORS.background,
+        fontFamily: FONT_SANS,
+        color: APP_COLORS.textLight,
+      }}>
+        Unknown muscle.
+      </div>
+    );
+  }
+
+  const handlePickMuscle = (next) => {
+    if (next === muscle) return;
+    if (navigateToMuscle) navigateToMuscle(next);
+  };
+
+  const exerciseLower = config.exercise.toLowerCase();
+
   return (
     <div style={{
       minHeight: '100vh',
       background: APP_COLORS.background,
-      padding: '0 0 60px 0',
-      fontFamily: "'DM Sans', sans-serif",
+      color: APP_COLORS.text,
+      fontFamily: FONT_SANS,
+      borderTop: `3px solid ${color}`,
+      display: 'flex',
+      flexDirection: 'column',
     }}>
 
-      {/* Header — neutral, color only as identity dot */}
+      {/* RULE BAR */}
       <div style={{
-        background: APP_COLORS.background,
-        borderBottom: `1px solid ${APP_COLORS.border}`,
-        padding: isMobile ? '16px 16px 14px' : '28px 40px 24px',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        borderBottom: `1px solid ${APP_COLORS.text}`,
+        padding: isMobile ? '12px 16px' : '14px 28px',
+        gap: 14,
+        flexWrap: isMobile ? 'wrap' : 'nowrap',
       }}>
         <button
           onClick={onBack}
           style={{
-            background: APP_COLORS.cardBackground,
+            background: 'transparent',
             border: `1px solid ${APP_COLORS.border}`,
-            borderRadius: '10px',
-            padding: '8px 18px',
+            padding: '6px 10px',
             cursor: 'pointer',
-            fontSize: '14px',
-            fontWeight: '600',
+            borderRadius: 2,
+            fontSize: 11,
+            fontWeight: 700,
+            letterSpacing: '0.04em',
             color: APP_COLORS.text,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
+            fontFamily: FONT_SANS,
           }}
         >
-          ← Back
+          ← ATLAS
         </button>
 
-        <div style={{ textAlign: 'center' }}>
-          <div style={{
-            fontSize: '13px',
-            fontWeight: '600',
-            color: APP_COLORS.textLight,
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-            marginBottom: '4px',
-          }}>
-            {exercise}
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-            {/* Color dot — the only muscle color in the header */}
-            <div style={{
-              width: '10px',
-              height: '10px',
-              borderRadius: '50%',
-              background: color,
-              flexShrink: 0,
-            }} />
-            <div style={{
-              fontSize: isMobile ? '22px' : '32px',
-              fontWeight: '800',
-              color: APP_COLORS.text,
-            }}>
-              {label}
-            </div>
-          </div>
-        </div>
+        {!isMobile && (
+          <>
+            <Eyebrow color={APP_COLORS.textLight}>Detail · Gym Progress Atlas</Eyebrow>
+            <span style={{ color: APP_COLORS.borderStrong }}>/</span>
+            <Eyebrow color={color}>{config.label}</Eyebrow>
+          </>
+        )}
 
-        <div style={{ width: '80px' }} />
+        <div style={{ flex: 1 }} />
+
+        <MusclePicker muscle={muscle} onChange={handlePickMuscle} />
+
+        {!isMobile && (
+          <>
+            <VRule height={24} />
+            <Eyebrow>Range</Eyebrow>
+            <MonoNum style={{ fontSize: 11.5, fontWeight: 600, color: APP_COLORS.text }}>
+              {derived.rangeLabel}
+            </MonoNum>
+          </>
+        )}
       </div>
 
-      <div style={{ padding: isMobile ? '16px 12px' : '28px 32px', maxWidth: '900px', margin: '0 auto' }}>
+      {/* HERO */}
+      <div style={{
+        padding: isMobile ? '20px 16px' : '28px 28px 24px',
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr' : '1fr auto',
+        gap: isMobile ? 20 : 28,
+        alignItems: 'flex-end',
+        borderBottom: `1px solid ${APP_COLORS.text}`,
+      }}>
+        <div>
+          <Eyebrow color={color}>Detail · Single muscle</Eyebrow>
+          <div style={{
+            display: 'flex',
+            alignItems: 'baseline',
+            gap: 14,
+            marginTop: 4,
+            flexWrap: 'wrap',
+          }}>
+            <h1 style={{
+              margin: 0,
+              fontSize: isMobile ? 40 : 56,
+              fontWeight: 800,
+              letterSpacing: '-0.03em',
+              lineHeight: 0.95,
+              color: APP_COLORS.text,
+            }}>
+              {config.label}
+            </h1>
+            <div style={{
+              fontSize: 14,
+              fontWeight: 600,
+              color: APP_COLORS.textLight,
+              padding: '4px 10px',
+              border: `1px solid ${APP_COLORS.border}`,
+              borderRadius: 4,
+              background: APP_COLORS.cardBackground,
+            }}>
+              {config.exercise}
+            </div>
+          </div>
+          <p style={{
+            margin: '10px 0 0',
+            fontSize: 13,
+            color: APP_COLORS.textLight,
+            maxWidth: 540,
+            lineHeight: 1.5,
+          }}>
+            Top-set load, session presence, and proximity to true failure — {derived.weeksCount} weeks, {derived.sessionsCount} sessions on {exerciseLower}.
+          </p>
+        </div>
 
-        {/* Stats row */}
-        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '16px', marginBottom: '20px' }}>
-          <PRBadge value={pr} color={color} />
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flex: 1 }}>
-            <div style={{ ...cardStyle, marginBottom: 0, display: 'flex', gap: '24px', alignItems: 'center' }}>
-              <div>
-                <div style={{ fontSize: '12px', color: APP_COLORS.textLight, fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Starting Weight</div>
-                <div style={{ fontSize: '28px', fontWeight: '700', color: APP_COLORS.text }}>
-                  {startWeight} <span style={{ fontSize: '14px', color: APP_COLORS.textLight }}>kg</span>
-                </div>
-              </div>
-              {/* Arrow — stone, not muscle color */}
-              <div style={{ fontSize: '28px', color: APP_COLORS.textLight }}>→</div>
-              <div>
-                <div style={{ fontSize: '12px', color: APP_COLORS.textLight, fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Total Gain</div>
-                {/* Color on data value only */}
-                <div style={{ fontSize: '28px', fontWeight: '700', color: color }}>
-                  +{totalGain.toFixed(2)} <span style={{ fontSize: '14px', color: APP_COLORS.textLight }}>kg</span>
-                </div>
-              </div>
-              <div>
-                <div style={{ fontSize: '12px', color: APP_COLORS.textLight, fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Sessions</div>
-                <div style={{ fontSize: '28px', fontWeight: '700', color: APP_COLORS.text }}>{sessions.length}</div>
-              </div>
+        <div style={{
+          display: 'flex',
+          alignItems: 'flex-end',
+          gap: 24,
+          flexWrap: 'wrap',
+        }}>
+          <div>
+            <Eyebrow>Personal Record</Eyebrow>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginTop: 2 }}>
+              <span style={{
+                fontSize: isMobile ? 56 : 72,
+                fontWeight: 800,
+                color,
+                letterSpacing: '-0.04em',
+                lineHeight: 0.85,
+              }}>
+                <MonoNum>{pickNumber(derived.pr, 1)}</MonoNum>
+              </span>
+              <span style={{ fontSize: 16, color: APP_COLORS.textLight, fontWeight: 700 }}>kg</span>
+            </div>
+          </div>
+          <VRule height={64} />
+          <div>
+            <Eyebrow>Total gain</Eyebrow>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginTop: 2 }}>
+              <span style={{
+                fontSize: isMobile ? 30 : 38,
+                fontWeight: 800,
+                color,
+                letterSpacing: '-0.03em',
+                lineHeight: 0.95,
+              }}>
+                +<MonoNum>{derived.gainPct}</MonoNum>%
+              </span>
+              <span style={{ fontSize: 13, color: APP_COLORS.textLight, fontWeight: 700 }}>
+                (+{pickNumber(derived.gain, 1)}kg)
+              </span>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Weight Progression — Tableau embed */}
-        <div style={cardStyle}>
-          <h3 style={{ margin: '0 0 16px', fontSize: '15px', fontWeight: '600', color: APP_COLORS.text }}>Weight Progression</h3>
-          <tableau-viz
-            src="https://public.tableau.com/views/test_17794812388080/Sheet1"
-            width="100%"
-            height="400"
-            hide-tabs
-            toolbar="hidden"
-          >
-            <viz-filter field="Muscle Group" value={muscle} />
-          </tableau-viz>
-        </div>
+      {/* KPI STRIP */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: isMobile ? 'repeat(3, 1fr)' : 'repeat(6, 1fr)',
+        rowGap: isMobile ? 16 : 0,
+        columnGap: 0,
+        padding: isMobile ? '14px 16px' : '14px 28px',
+        borderBottom: `1px solid ${APP_COLORS.text}`,
+      }}>
+        <KPI label="Start" value={pickNumber(derived.start, 1)} unit="kg" />
+        <KPI label="Sessions" value={derived.sessionsCount} />
+        <KPI label="Top set" value={`${derived.topSets || 0}×${derived.topReps || 0}`} />
+        <KPI label="Total volume" value={(derived.totalVolume / 1000).toFixed(1)} unit="·10³ kg" />
+        <KPI label="Mean RPE" value={derived.meanRpe.toFixed(1)} />
+        <KPI label="PR date" value={derived.prDateLabel} />
+      </div>
 
-        {/* Heatmap */}
-        <div style={cardStyle}>
-          <TrainingHeatmap muscleDates={muscleDates} color={color} colorLight={colorLight} />
-        </div>
-
-        {/* Volume */}
-        <div style={cardStyle}>
-          <h3 style={{ margin: '0 0 16px', fontSize: '15px', fontWeight: '600', color: APP_COLORS.text }}>
-            Training Volume
-            <span style={{ fontSize: '12px', fontWeight: '400', color: APP_COLORS.textLight, marginLeft: '8px' }}>weight × reps per session</span>
-          </h3>
-          <ResponsiveContainer width="100%" height={180}>
-            <BarChart data={volumeData} margin={{ top: 4, right: 8, bottom: 4, left: -10 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={APP_COLORS.border} vertical={false} />
-              <XAxis dataKey="date" tickFormatter={formatDate} ticks={ticks} tick={{ fontSize: 11, fill: APP_COLORS.textLight }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: APP_COLORS.textLight }} axisLine={false} tickLine={false} />
-              <Tooltip content={<CustomTooltip color={color} />} />
-              <Bar dataKey="volume" fill={colorLight} stroke={color} strokeWidth={1} radius={[4, 4, 0, 0]} name="Volume" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* RIR */}
-        <div style={cardStyle}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-            <h3 style={{ margin: 0, fontSize: '15px', fontWeight: '600', color: APP_COLORS.text }}>Reps in Reserve (RIR)</h3>
-            {/* ADVANCED badge — neutral, no muscle color */}
-            <span style={{
-              background: APP_COLORS.cardBackground,
-              border: `1px solid ${APP_COLORS.border}`,
-              borderRadius: '8px',
-              padding: '3px 10px',
-              fontSize: '11px',
-              fontWeight: '700',
-              color: APP_COLORS.textLight,
-              letterSpacing: '0.04em',
-            }}>
-              ADVANCED
-            </span>
+      {/* TABLEAU VIEWPORT */}
+      <div style={{
+        flex: 1,
+        background: APP_COLORS.cardBackground,
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: 0,
+      }}>
+        <div style={{
+          flex: 1,
+          padding: isMobile ? '14px 16px' : '16px 24px',
+          minHeight: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 12,
+        }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 12,
+            flexWrap: 'wrap',
+          }}>
+            <div>
+              <Eyebrow color={color}>tableau · gym_{view} · {muscle.toLowerCase()}</Eyebrow>
+              <div style={{ fontSize: 16, fontWeight: 700, marginTop: 2 }}>
+                {VIEW_TITLES[view]}
+              </div>
+            </div>
+            <ViewToggle view={view} onChange={setView} />
           </div>
-          <p style={{ fontSize: '12px', color: APP_COLORS.textLight, margin: '0 0 12px' }}>
-            How many more reps you could have done. Lower = harder effort. Approaching 0 means maximum intensity.
-          </p>
-          <ResponsiveContainer width="100%" height={180}>
-            <LineChart data={sessions} margin={{ top: 4, right: 8, bottom: 4, left: -10 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={APP_COLORS.border} vertical={false} />
-              <XAxis dataKey="date" tickFormatter={formatDate} ticks={ticks} tick={{ fontSize: 11, fill: APP_COLORS.textLight }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: APP_COLORS.textLight }} axisLine={false} tickLine={false} domain={[0, 4]} ticks={[0,1,2,3,4]} />
-              <Tooltip content={<CustomTooltip color={color} />} />
-              <ReferenceLine y={0} stroke={color} strokeDasharray="4 4" strokeWidth={1.5} label={{ value: 'Max effort', position: 'right', fontSize: 10, fill: color }} />
-              <Line type="monotone" dataKey="rir" stroke={color} strokeWidth={2} dot={false} activeDot={{ r: 4 }} name="RIR" />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
 
-        {/* RPE */}
-        <div style={cardStyle}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-            <h3 style={{ margin: 0, fontSize: '15px', fontWeight: '600', color: APP_COLORS.text }}>Training Intensity (RPE)</h3>
-            <span style={{
-              background: APP_COLORS.cardBackground,
+          {view === 'gems' && (
+            <div style={{
+              background: APP_COLORS.background,
               border: `1px solid ${APP_COLORS.border}`,
-              borderRadius: '8px',
-              padding: '3px 10px',
-              fontSize: '11px',
-              fontWeight: '700',
-              color: APP_COLORS.textLight,
-              letterSpacing: '0.04em',
+              borderRadius: 2,
+              padding: '14px 18px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: isMobile ? 18 : 28,
+              flexWrap: 'wrap',
             }}>
-              ADVANCED
-            </span>
-          </div>
-          <p style={{ fontSize: '12px', color: APP_COLORS.textLight, margin: '0 0 12px' }}>
-            Rate of Perceived Exertion on a 1–10 scale. Consistently high RPE reflects a high-intensity training approach.
-          </p>
-          <ResponsiveContainer width="100%" height={160}>
-            <BarChart data={sessions} margin={{ top: 4, right: 8, bottom: 4, left: -10 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={APP_COLORS.border} vertical={false} />
-              <XAxis dataKey="date" tickFormatter={formatDate} ticks={ticks} tick={{ fontSize: 11, fill: APP_COLORS.textLight }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: APP_COLORS.textLight }} axisLine={false} tickLine={false} domain={[0, 10]} ticks={[0,5,10]} />
-              <Tooltip content={<CustomTooltip color={color} />} />
-              <Bar dataKey="rpe" fill={color} opacity={0.7} radius={[3, 3, 0, 0]} name="RPE" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+              <div>
+                <Eyebrow color={color}>Hidden gems found</Eyebrow>
+                <div style={{
+                  fontSize: 26,
+                  fontWeight: 800,
+                  color,
+                  marginTop: 2,
+                  letterSpacing: '-0.02em',
+                  lineHeight: 1,
+                }}>
+                  <MonoNum>{derived.gemCount}</MonoNum>
+                  <span style={{
+                    fontSize: 11,
+                    color: APP_COLORS.textFaint,
+                    fontWeight: 700,
+                    marginLeft: 4,
+                  }}>of {derived.sessionsCount}</span>
+                </div>
+              </div>
+              <VRule height={40} />
+              <div>
+                <Eyebrow>Via more reps/sets</Eyebrow>
+                <div style={{ fontSize: 18, fontWeight: 800, marginTop: 2 }}>
+                  <MonoNum>{derived.repsGems}</MonoNum>
+                </div>
+              </div>
+              <VRule height={40} />
+              <div>
+                <Eyebrow>Via lower RIR</Eyebrow>
+                <div style={{ fontSize: 18, fontWeight: 800, marginTop: 2 }}>
+                  <MonoNum>{derived.rirGems}</MonoNum>
+                </div>
+              </div>
+              <div style={{ flex: 1, minWidth: 120 }} />
+              <div style={{
+                maxWidth: 380,
+                fontSize: 12,
+                color: APP_COLORS.textLight,
+                lineHeight: 1.5,
+              }}>
+                Sessions where the load stayed flat but the work got better — more reps, more sets, or the same effort at a lower reps-in-reserve. The PR is the trophy; these are the days that built it.
+              </div>
+            </div>
+          )}
 
+          <div style={{
+            flex: 1,
+            background: APP_COLORS.background,
+            border: `1px solid ${APP_COLORS.border}`,
+            borderRadius: 2,
+            padding: 12,
+            minHeight: isMobile ? 480 : 560,
+            overflow: 'hidden',
+          }}>
+            <tableau-viz
+              key={`${view}-${muscle}`}
+              src={TABLEAU_VIEWS[view]}
+              width="100%"
+              height={isMobile ? '460' : '720'}
+              hide-tabs
+              toolbar="hidden"
+            >
+              <viz-parameter name="pMuscle" value={muscle} />
+            </tableau-viz>
+          </div>
+        </div>
       </div>
     </div>
   );

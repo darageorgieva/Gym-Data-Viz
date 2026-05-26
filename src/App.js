@@ -27,7 +27,7 @@ function getUrlForMuscle(muscle) {
 export default function App() {
   const [selectedMuscle, setSelectedMuscle] = useState(getMuscleFromUrl);
   const hasInAppHistoryRef = useRef(false);
-  const { data, loading, getSessionsForMuscle, getVolumeBySession, getMuscleDates } = useGymData();
+  const { data, loading, getSessionsForMuscle } = useGymData();
 
   const { muscleTimeSeries, weekLabels } = useMemo(
     () => createMuscleTimeSeries(data),
@@ -88,10 +88,9 @@ export default function App() {
   if (selectedMuscle) {
     return (
       <MuscleDashboard
-        muscle={selectedMuscle}
-        sessions={getSessionsForMuscle(selectedMuscle)}
-        volumeData={getVolumeBySession(selectedMuscle)}
-        muscleDates={getMuscleDates(selectedMuscle)}
+        initialMuscle={selectedMuscle}
+        getSessionsForMuscle={getSessionsForMuscle}
+        navigateToMuscle={navigateToMuscle}
         onBack={handleDashboardBack}
       />
     );

@@ -125,8 +125,11 @@ export const MUSCLE_CONFIG = {
 export const APP_COLORS = {
   background:     '#FFFFFF',
   cardBackground: '#FAFAF7',
+  surfaceDeep:    '#EAE7DF',
   text:           '#1C1917',
   textLight:      '#78716C',
+  textFaint:      '#A8A29E',
   border:         '#E7E5E0',
+  borderStrong:   '#D6D3CC',
   cardShadow:     '0 2px 12px rgba(0,0,0,0.07)',
 };
