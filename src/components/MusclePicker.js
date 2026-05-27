@@ -15,7 +15,12 @@ export default function MusclePicker({ muscle, onChange }) {
   }, [open]);
 
   return (
-    <div ref={rootRef} style={{ position: 'relative', fontFamily: "'DM Sans', sans-serif" }}>
+    <div
+      ref={rootRef}
+      style={{ position: 'relative', fontFamily: "'DM Sans', sans-serif" }}
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
       <button
         onClick={() => setOpen((o) => !o)}
         style={{

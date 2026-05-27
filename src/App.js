@@ -60,11 +60,6 @@ export default function App() {
   }, []);
 
   const handleDashboardBack = useCallback(() => {
-    if (hasInAppHistoryRef.current) {
-      window.history.back();
-      return;
-    }
-
     navigateToMuscle(null, { replace: true });
   }, [navigateToMuscle]);
 

@@ -101,10 +101,10 @@ export function calculateRollingVolume(series, selectedWeek, windowSize = 4) {
   const selectedIndex = series.findIndex((point) => point.week === selectedWeek);
   if (selectedIndex === -1) return null;
 
-  const startIndex = Math.max(0, selectedIndex - windowSize + 1);
-  const window = series.slice(startIndex, selectedIndex + 1);
-  if (!window.length) return null;
+  const startIndex = selectedIndex - windowSize + 1;
+  if (startIndex < 0) return null;
 
+  const window = series.slice(startIndex, selectedIndex + 1);
   return window.reduce((sum, point) => sum + point.volumeKg, 0) / window.length;
 }
 
