@@ -14,7 +14,7 @@
 // ─────────────────────────────────────────────────────────────
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { MUSCLE_CONFIG, APP_COLORS } from '../config';
+import { MUSCLE_CONFIG, APP_COLORS, FUNCTIONAL_COLORS } from '../config';
 import { useIsMobile } from '../useIsMobile';
 import MusclePicker from './MusclePicker';
 
@@ -36,8 +36,22 @@ const VIEW_TITLES = {
   gems:     'Hidden gems — progress without weight increase',
 };
 
-const FONT_SANS = "'DM Sans', sans-serif";
-const FONT_MONO = "'DM Mono', 'JetBrains Mono', monospace";
+const FONT_DISPLAY = "'Space Grotesk', sans-serif";
+const FONT_SANS    = "'DM Sans', sans-serif";
+const FONT_MONO    = "'DM Mono', 'JetBrains Mono', monospace";
+
+const DASH_STYLES = `
+  @keyframes dashFadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .dash-fade { animation: dashFadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .dash-d1 { animation-delay: 0.08s; }
+  .dash-d2 { animation-delay: 0.18s; }
+  .dash-d3 { animation-delay: 0.28s; }
+  .dash-btn-back { transition: background 220ms ease-out, border-color 220ms ease-out; }
+  .dash-btn-back:hover { background: #FAFAF7 !important; border-color: #D6D3CC !important; }
+`;
 
 function Eyebrow({ children, color, style }) {
   return (
@@ -56,7 +70,7 @@ function Eyebrow({ children, color, style }) {
 function MonoNum({ children, style }) {
   return (
     <span style={{
-      fontFamily: FONT_MONO,
+      fontFamily: FONT_DISPLAY,
       fontVariantNumeric: 'tabular-nums',
       ...style,
     }}>{children}</span>
@@ -64,12 +78,12 @@ function MonoNum({ children, style }) {
 }
 
 function VRule({ height, color }) {
-  return <div style={{ width: 1, height, background: color || APP_COLORS.border }} />;
+  return <div style={{ width: 1, height, background: color || APP_COLORS.border, flexShrink: 0 }} />;
 }
 
 function KPI({ label, value, unit, color }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0, alignItems: 'center' }}>
       <Eyebrow>{label}</Eyebrow>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 3 }}>
         <span style={{
@@ -93,12 +107,12 @@ function ViewToggle({ view, onChange }) {
   const baseBtn = {
     border: 'none',
     cursor: 'pointer',
-    padding: '8px 18px',
-    borderRadius: 8,
-    fontSize: 13,
+    padding: '7px 18px',
+    borderRadius: 20,
+    fontSize: 11,
     fontWeight: 700,
-    letterSpacing: '0.04em',
-    transition: 'all 120ms ease',
+    letterSpacing: '0.06em',
+    transition: 'all 220ms ease-out',
     fontFamily: FONT_SANS,
   };
   return (
@@ -106,8 +120,8 @@ function ViewToggle({ view, onChange }) {
       display: 'inline-flex',
       background: APP_COLORS.background,
       border: `1px solid ${APP_COLORS.border}`,
-      borderRadius: 10,
-      padding: 4,
+      borderRadius: 24,
+      padding: 3,
     }}>
       {VIEW_OPTIONS.map((opt) => {
         const active = view === opt.id;
@@ -269,287 +283,331 @@ export default function MuscleDashboard({ initialMuscle, getSessionsForMuscle, n
 
   const exerciseLower = config.exercise.toLowerCase();
 
+  const kpis = [
+    { label: 'Start',        value: pickNumber(derived.start, 1),                  unit: 'kg' },
+    { label: 'Sessions',     value: derived.sessionsCount },
+    { label: 'Total volume', value: (derived.totalVolume / 1000).toFixed(1),        unit: '·10³ kg' },
+    { label: 'Mean RPE',     value: derived.meanRpe.toFixed(1) },
+    { label: 'PR date',      value: derived.prDateLabel },
+  ];
+
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: APP_COLORS.background,
-      color: APP_COLORS.text,
-      fontFamily: FONT_SANS,
-      borderTop: `3px solid ${color}`,
-      display: 'flex',
-      flexDirection: 'column',
-    }}>
-
-      {/* RULE BAR */}
+    <>
+      <style>{DASH_STYLES}</style>
       <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        borderBottom: `1px solid ${APP_COLORS.text}`,
-        padding: isMobile ? '12px 16px' : '14px 28px',
-        gap: 14,
-        flexWrap: isMobile ? 'wrap' : 'nowrap',
-      }}>
-        <button
-          onClick={onBack}
-          style={{
-            background: 'transparent',
-            border: `1px solid ${APP_COLORS.border}`,
-            padding: '6px 10px',
-            cursor: 'pointer',
-            borderRadius: 2,
-            fontSize: 11,
-            fontWeight: 700,
-            letterSpacing: '0.04em',
-            color: APP_COLORS.text,
-            fontFamily: FONT_SANS,
-          }}
-        >
-          ← ATLAS
-        </button>
-
-        {!isMobile && (
-          <>
-            <Eyebrow color={APP_COLORS.textLight}>Detail · Gym Progress Atlas</Eyebrow>
-            <span style={{ color: APP_COLORS.borderStrong }}>/</span>
-            <Eyebrow color={color}>{config.label}</Eyebrow>
-          </>
-        )}
-
-        <div style={{ flex: 1 }} />
-
-        <MusclePicker muscle={muscle} onChange={handlePickMuscle} />
-
-        {!isMobile && (
-          <>
-            <VRule height={24} />
-            <Eyebrow>Range</Eyebrow>
-            <MonoNum style={{ fontSize: 11.5, fontWeight: 600, color: APP_COLORS.text }}>
-              {derived.rangeLabel}
-            </MonoNum>
-          </>
-        )}
-      </div>
-
-      {/* HERO */}
-      <div style={{
-        padding: isMobile ? '20px 16px' : '28px 28px 24px',
-        display: 'grid',
-        gridTemplateColumns: isMobile ? '1fr' : '1fr auto',
-        gap: isMobile ? 20 : 28,
-        alignItems: 'flex-end',
-        borderBottom: `1px solid ${APP_COLORS.text}`,
-      }}>
-        <div>
-          <Eyebrow color={color}>Detail · Single muscle</Eyebrow>
-          <div style={{
-            display: 'flex',
-            alignItems: 'baseline',
-            gap: 14,
-            marginTop: 4,
-            flexWrap: 'wrap',
-          }}>
-            <h1 style={{
-              margin: 0,
-              fontSize: isMobile ? 40 : 56,
-              fontWeight: 800,
-              letterSpacing: '-0.03em',
-              lineHeight: 0.95,
-              color: APP_COLORS.text,
-            }}>
-              {config.label}
-            </h1>
-            <div style={{
-              fontSize: 14,
-              fontWeight: 600,
-              color: APP_COLORS.textLight,
-              padding: '4px 10px',
-              border: `1px solid ${APP_COLORS.border}`,
-              borderRadius: 4,
-              background: APP_COLORS.cardBackground,
-            }}>
-              {config.exercise}
-            </div>
-          </div>
-          <p style={{
-            margin: '10px 0 0',
-            fontSize: 13,
-            color: APP_COLORS.textLight,
-            maxWidth: 540,
-            lineHeight: 1.5,
-          }}>
-            Top-set load, session presence, and proximity to true failure — {derived.weeksCount} weeks, {derived.sessionsCount} sessions on {exerciseLower}.
-          </p>
-        </div>
-
-        <div style={{
-          display: 'flex',
-          alignItems: 'flex-end',
-          gap: 24,
-          flexWrap: 'wrap',
-        }}>
-          <div>
-            <Eyebrow>Personal Record</Eyebrow>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginTop: 2 }}>
-              <span style={{
-                fontSize: isMobile ? 56 : 72,
-                fontWeight: 800,
-                color,
-                letterSpacing: '-0.04em',
-                lineHeight: 0.85,
-              }}>
-                <MonoNum>{pickNumber(derived.pr, 1)}</MonoNum>
-              </span>
-              <span style={{ fontSize: 16, color: APP_COLORS.textLight, fontWeight: 700 }}>kg</span>
-            </div>
-          </div>
-          <VRule height={64} />
-          <div>
-            <Eyebrow>Total gain</Eyebrow>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginTop: 2 }}>
-              <span style={{
-                fontSize: isMobile ? 30 : 38,
-                fontWeight: 800,
-                color,
-                letterSpacing: '-0.03em',
-                lineHeight: 0.95,
-              }}>
-                +<MonoNum>{derived.gainPct}</MonoNum>%
-              </span>
-              <span style={{ fontSize: 13, color: APP_COLORS.textLight, fontWeight: 700 }}>
-                (+{pickNumber(derived.gain, 1)}kg)
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* KPI STRIP */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: isMobile ? 'repeat(3, 1fr)' : 'repeat(6, 1fr)',
-        rowGap: isMobile ? 16 : 0,
-        columnGap: 0,
-        padding: isMobile ? '14px 16px' : '14px 28px',
-        borderBottom: `1px solid ${APP_COLORS.text}`,
-      }}>
-        <KPI label="Start" value={pickNumber(derived.start, 1)} unit="kg" />
-        <KPI label="Sessions" value={derived.sessionsCount} />
-        <KPI label="Top set" value={`${derived.topSets || 0}×${derived.topReps || 0}`} />
-        <KPI label="Total volume" value={(derived.totalVolume / 1000).toFixed(1)} unit="·10³ kg" />
-        <KPI label="Mean RPE" value={derived.meanRpe.toFixed(1)} />
-        <KPI label="PR date" value={derived.prDateLabel} />
-      </div>
-
-      {/* TABLEAU VIEWPORT */}
-      <div style={{
-        flex: 1,
-        background: APP_COLORS.cardBackground,
+        minHeight: '100vh',
+        background: APP_COLORS.background,
+        color: APP_COLORS.text,
+        fontFamily: FONT_SANS,
+        borderTop: `3px solid ${APP_COLORS.borderStrong}`,
         display: 'flex',
         flexDirection: 'column',
-        minHeight: 0,
       }}>
-        <div style={{
-          flex: 1,
-          padding: isMobile ? '14px 16px' : '16px 24px',
-          minHeight: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 12,
-        }}>
-          <div style={{
+        {/* RULE BAR — full width, padding calculated to align with centered content */}
+        <div
+          style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            gap: 12,
-            flexWrap: 'wrap',
+            borderBottom: `1px solid ${APP_COLORS.border}`,
+            padding: isMobile ? '14px 16px' : '18px 24px',
+            gap: 14,
+            flexWrap: isMobile ? 'wrap' : 'nowrap',
+            background: APP_COLORS.cardBackground,
           }}>
-            <div>
-              <Eyebrow color={color}>tableau · gym_{view} · {muscle.toLowerCase()}</Eyebrow>
-              <div style={{ fontSize: 16, fontWeight: 700, marginTop: 2 }}>
-                {VIEW_TITLES[view]}
-              </div>
-            </div>
-            <ViewToggle view={view} onChange={setView} />
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            <button
+              onClick={onBack}
+              className="dash-btn-back"
+              style={{
+                border: `1px solid ${APP_COLORS.border}`,
+                borderRadius: 8,
+                background: 'transparent',
+                color: APP_COLORS.text,
+                padding: 'clamp(6px, 0.8vh, 10px) clamp(14px, 1.2vw, 20px)',
+                fontSize: 'clamp(12px, 1vw, 14px)',
+                fontWeight: 700,
+                cursor: 'pointer',
+                fontFamily: FONT_DISPLAY,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 7,
+                letterSpacing: '0.01em',
+              }}
+            >
+← Back
+            </button>
+            {!isMobile && (
+              <>
+                <Eyebrow color={APP_COLORS.textLight}>Gym Progress Atlas</Eyebrow>
+                <span style={{ color: APP_COLORS.borderStrong }}>/</span>
+                <Eyebrow>{config.label}</Eyebrow>
+              </>
+            )}
           </div>
 
-          {view === 'gems' && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            <MusclePicker muscle={muscle} onChange={handlePickMuscle} />
+            {!isMobile && (
+              <>
+                <VRule height={24} />
+                <Eyebrow>Range</Eyebrow>
+                <MonoNum style={{ fontSize: 11.5, fontWeight: 600, color: APP_COLORS.text }}>
+                  {derived.rangeLabel}
+                </MonoNum>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* centered container for hero, KPI, tableau */}
+        <div style={{
+          maxWidth: 1100,
+          margin: '0 auto',
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          flex: 1,
+        }}>
+
+        {/* HERO */}
+        <div
+          className="dash-fade dash-d1"
+          style={{
+            padding: isMobile ? '32px 20px 28px' : '52px 80px 44px',
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : '1fr auto',
+            gap: isMobile ? 24 : 40,
+            alignItems: 'flex-end',
+            borderBottom: `1px solid ${APP_COLORS.border}`,
+            background: APP_COLORS.background,
+            position: 'relative',
+          }}>
+          <div>
             <div style={{
-              background: APP_COLORS.background,
-              border: `1px solid ${APP_COLORS.border}`,
-              borderRadius: 2,
-              padding: '14px 18px',
+              display: 'flex',
+              alignItems: 'baseline',
+              gap: 14,
+              marginTop: 6,
+              flexWrap: 'wrap',
+            }}>
+              <h1 style={{
+                margin: 0,
+                fontSize: isMobile ? '44px' : 'clamp(52px, 7vw, 88px)',
+                fontWeight: 800,
+                letterSpacing: '-0.035em',
+                lineHeight: 0.9,
+                color: APP_COLORS.text,
+                fontFamily: FONT_DISPLAY,
+              }}>
+                {config.label}
+              </h1>
+              <div style={{
+                fontSize: 13,
+                fontWeight: 600,
+                color: APP_COLORS.textLight,
+                padding: '4px 10px',
+                border: `1px solid ${APP_COLORS.border}`,
+                borderRadius: 4,
+                background: APP_COLORS.cardBackground,
+                whiteSpace: 'nowrap',
+                alignSelf: 'center',
+              }}>
+                {config.exercise}
+              </div>
+            </div>
+            <p style={{
+              margin: '16px 0 0',
+              fontSize: 13,
+              color: APP_COLORS.textLight,
+              maxWidth: 520,
+              lineHeight: 1.55,
+            }}>
+            </p>
+          </div>
+
+          <div style={{
+            display: 'flex',
+            alignItems: 'flex-end',
+            gap: 24,
+            flexWrap: 'wrap',
+            background: APP_COLORS.cardBackground,
+            border: `1px solid ${APP_COLORS.border}`,
+            borderRadius: 8,
+            padding: isMobile ? '20px 24px' : '26px 80px',
+          }}>
+            <div>
+              <Eyebrow>Personal Record</Eyebrow>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginTop: 2 }}>
+                <span style={{
+                  fontSize: isMobile ? 56 : 72,
+                  fontWeight: 800,
+                  color,
+                  letterSpacing: '-0.04em',
+                  lineHeight: 0.85,
+                  fontFamily: FONT_DISPLAY,
+                }}>
+                  <MonoNum>{pickNumber(derived.pr, 1)}</MonoNum>
+                </span>
+                <span style={{ fontSize: 16, color: APP_COLORS.textLight, fontWeight: 700 }}>kg</span>
+              </div>
+            </div>
+            <VRule height={64} />
+            <div>
+              <Eyebrow>Total gain</Eyebrow>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginTop: 2 }}>
+                <span style={{
+                  fontSize: isMobile ? 30 : 38,
+                  fontWeight: 800,
+                  color,
+                  letterSpacing: '-0.03em',
+                  lineHeight: 0.95,
+                  fontFamily: FONT_DISPLAY,
+                }}>
+                  +<MonoNum>{derived.gainPct}</MonoNum>%
+                </span>
+                <span style={{ fontSize: 13, color: APP_COLORS.textLight, fontWeight: 700 }}>
+                  (+{pickNumber(derived.gain, 1)}kg)
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* KPI STRIP */}
+        <div
+          className="dash-fade dash-d2"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? 'repeat(3, 1fr)' : 'repeat(5, 1fr)',
+            borderBottom: `1px solid ${APP_COLORS.border}`,
+          }}>
+          {kpis.map((kpi) => (
+            <div
+              key={kpi.label}
+              style={{
+                padding: isMobile ? '18px 20px' : '20px 24px 20px 80px',
+                borderTop: `1px solid ${APP_COLORS.border}`,
+              }}>
+              <KPI label={kpi.label} value={kpi.value} unit={kpi.unit} />
+            </div>
+          ))}
+        </div>
+
+        {/* TABLEAU VIEWPORT */}
+        <div
+          className="dash-fade dash-d3"
+          style={{
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            minHeight: 0,
+          }}>
+          <div style={{
+            flex: 1,
+            padding: isMobile ? '20px 20px' : '28px 120px',
+            minHeight: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 20,
+          }}>
+            <div style={{
               display: 'flex',
               alignItems: 'center',
-              gap: isMobile ? 18 : 28,
+              justifyContent: 'space-between',
+              gap: 12,
               flexWrap: 'wrap',
             }}>
               <div>
-                <Eyebrow color={color}>Hidden gems found</Eyebrow>
-                <div style={{
-                  fontSize: 26,
-                  fontWeight: 800,
-                  color,
-                  marginTop: 2,
-                  letterSpacing: '-0.02em',
-                  lineHeight: 1,
-                }}>
-                  <MonoNum>{derived.gemCount}</MonoNum>
-                  <span style={{
-                    fontSize: 11,
-                    color: APP_COLORS.textFaint,
-                    fontWeight: 700,
-                    marginLeft: 4,
-                  }}>of {derived.sessionsCount}</span>
+                <div style={{ fontSize: 16, fontWeight: 700, marginTop: 2 }}>
+                  {VIEW_TITLES[view]}
                 </div>
               </div>
-              <VRule height={40} />
-              <div>
-                <Eyebrow>Via more reps/sets</Eyebrow>
-                <div style={{ fontSize: 18, fontWeight: 800, marginTop: 2 }}>
-                  <MonoNum>{derived.repsGems}</MonoNum>
-                </div>
-              </div>
-              <VRule height={40} />
-              <div>
-                <Eyebrow>Via lower RIR</Eyebrow>
-                <div style={{ fontSize: 18, fontWeight: 800, marginTop: 2 }}>
-                  <MonoNum>{derived.rirGems}</MonoNum>
-                </div>
-              </div>
-              <div style={{ flex: 1, minWidth: 120 }} />
-              <div style={{
-                maxWidth: 380,
-                fontSize: 12,
-                color: APP_COLORS.textLight,
-                lineHeight: 1.5,
-              }}>
-                Sessions where the load stayed flat but the work got better — more reps, more sets, or the same effort at a lower reps-in-reserve. The PR is the trophy; these are the days that built it.
-              </div>
+              <ViewToggle view={view} onChange={setView} />
             </div>
-          )}
 
-          <div style={{
-            flex: 1,
-            background: APP_COLORS.background,
-            border: `1px solid ${APP_COLORS.border}`,
-            borderRadius: 2,
-            padding: 12,
-            minHeight: isMobile ? 480 : 560,
-            overflow: 'hidden',
-          }}>
-            <tableau-viz
-              key={`${view}-${muscle}`}
-              src={TABLEAU_VIEWS[view]}
-              width="100%"
-              height={isMobile ? '460' : '720'}
-              hide-tabs
-              toolbar="hidden"
-            >
-              <viz-parameter name="pMuscle" value={muscle} />
-            </tableau-viz>
+            {view === 'gems' && (
+              <div style={{
+                background: APP_COLORS.cardBackground,
+                border: `1px solid ${APP_COLORS.border}`,
+                borderRadius: 6,
+                padding: '32px 40px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 20,
+              }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 36,
+                  flexWrap: 'wrap',
+                  justifyContent: 'center',
+                }}>
+                  <div style={{ textAlign: 'center' }}>
+                    <Eyebrow>Hidden gems found</Eyebrow>
+                    <div style={{
+                      fontSize: 32,
+                      fontWeight: 800,
+                      color,
+                      marginTop: 4,
+                      letterSpacing: '-0.02em',
+                      lineHeight: 1,
+                    }}>
+                      <MonoNum>{derived.gemCount}</MonoNum>
+                      <span style={{ fontSize: 12, color: APP_COLORS.textFaint, fontWeight: 700, marginLeft: 5 }}>
+                        of {derived.sessionsCount}
+                      </span>
+                    </div>
+                  </div>
+                  <VRule height={44} />
+                  <div style={{ textAlign: 'center' }}>
+                    <Eyebrow>Via more reps/sets</Eyebrow>
+                    <div style={{ fontSize: 24, fontWeight: 800, marginTop: 4 }}>
+                      <MonoNum>{derived.repsGems}</MonoNum>
+                    </div>
+                  </div>
+                  <VRule height={44} />
+                  <div style={{ textAlign: 'center' }}>
+                    <Eyebrow>Via lower RIR</Eyebrow>
+                    <div style={{ fontSize: 24, fontWeight: 800, marginTop: 4 }}>
+                      <MonoNum>{derived.rirGems}</MonoNum>
+                    </div>
+                  </div>
+                </div>
+                <div style={{
+                  fontSize: 12,
+                  color: APP_COLORS.textLight,
+                  lineHeight: 1.6,
+                  textAlign: 'center',
+                  maxWidth: 420,
+                }}>
+                  Load stayed the same but progress happened — more reps, more sets, or the same effort at a lower reps-in-reserve.
+                </div>
+              </div>
+            )}
+
+            <div style={{
+              flex: 1,
+              minHeight: isMobile ? 380 : (view === 'gems' ? 400 : 560),
+              overflow: 'hidden',
+            }}>
+              <tableau-viz
+                key={`${view}-${muscle}`}
+                src={TABLEAU_VIEWS[view]}
+                width="100%"
+                height={isMobile ? '360' : (view === 'gems' ? '380' : '720')}
+                hide-tabs
+                toolbar="hidden"
+              >
+                <viz-parameter name="pMuscle" value={muscle} />
+              </tableau-viz>
+            </div>
           </div>
         </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

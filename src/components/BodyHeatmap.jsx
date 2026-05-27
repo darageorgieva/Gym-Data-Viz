@@ -214,6 +214,28 @@ export default function BodyHeatmap({
 
         {/* Legend — right column */}
         <div style={{ flex: '0 0 240px', width: '240px' }}>
+          {!isMobile && (
+            <div style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: 8,
+              marginBottom: 20,
+            }}>
+              <svg width="28" height="16" viewBox="0 0 28 16" fill="none" style={{ flexShrink: 0, marginTop: 3 }}>
+                <path d="M26 8 H2 M2 8 L8 3 M2 8 L8 13" stroke="#A8A29E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <p style={{
+                margin: 0,
+                fontSize: 12,
+                color: '#A8A29E',
+                lineHeight: 1.5,
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 500,
+              }}>
+                Click any muscle group to open its dashboard
+              </p>
+            </div>
+          )}
           <HeatmapLegend comparisonMode={comparisonMode} hoveredProgress={hoveredProgress} />
         </div>
       </div>
