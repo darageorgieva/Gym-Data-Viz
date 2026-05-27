@@ -221,3 +221,18 @@ npm start
 
 Runs on `http://localhost:3000`.
 
+
+| Muscle | Exercise | Current start | Current PR/end 
+|---|---|---|---|
+| Abs | Cable Crunch | 33kg | 57kg |  
+| Biceps | Dumbbell Curl | 7kg | 12.5 kg |  
+| Calves | Calf Raise | 60kg | 86.25kg | 
+| Chest | Pec Deck | 25kg | 50kg | 
+| Glutes | Hip Thrust | 45kg | 76.25kg | 
+| Hamstrings | Seated Leg Curl | 27.5kg | 43kg | 
+| Lats | Lat Pulldown | 37.5kg | 55kg 
+| Quads | Leg Extension | 45kg | 93kg | 
+| Rear Delts | Rear Delt Pec Deck | 25kg | 45kg | 
+| Shoulders | Shoulder Press | 35kg | 52.5kg | 
+| Traps | Chest Supported Row | 35kg | 55kg | 
+| Triceps | Tricep Pushdown | 22.5kg | 46kg | 
