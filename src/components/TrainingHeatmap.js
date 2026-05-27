@@ -5,9 +5,9 @@ const MONTHS = ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
 export default function TrainingHeatmap({ muscleDates, color, colorLight }) {
   const dateSet = new Set(muscleDates);
 
-  // Build calendar from Oct 1 2024 to Mar 31 2025
-  const start = new Date('2024-10-01');
-  const end = new Date('2025-03-31');
+  // Build calendar from Oct 1 2025 to Mar 31 2026
+  const start = new Date('2025-10-01');
+  const end = new Date('2026-03-31');
 
   // Build weeks
   const weeks = [];
