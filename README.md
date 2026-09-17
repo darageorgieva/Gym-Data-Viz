@@ -164,54 +164,6 @@ The two modes answer different questions and are designed for different training
 A dropdown with 12 muscle names is cognitively equivalent to reading a list. The anatomy SVG reduces lookup cost by letting the user point at their own body — spatial memory replaces label scanning.
 ---
 
-## Next steps (prioritized for exam value)
-
-### 1. Scatter plot: Volume vs RPE per session — HIGH PRIORITY
-
-**What it shows:** Plot total volume (y-axis) against RPE (x-axis) for every session. Reveals whether you work harder *and* more, or whether high-effort sessions are actually lower volume (fatigue-driven).
-
-**Why it matters for Cairo:** The most *insightful* chart the dataset supports. It encodes a relationship, not just a trend — the only chart type that can show whether two variables move together.
----
-
-### 2. Bump/rank chart: Monthly training focus — MEDIUM PRIORITY
-
-**What it shows:** For each month (Oct–Mar), rank muscles by session count. Show rank shifts as connected lines per muscle.
-
-**Why it matters for Cairo:** Uses position (rank) as the primary encoding rather than length or color. Surfaces periodization.
-
-**Implementation notes:**
-- `getRankingByMonth()` in `useGymData.js`
-- Draw with SVG lines or approximate with `LineChart` on an inverted y-axis
-
-
----
-
-## Paper structure suggestion
-
-Max 4 physical pages: 1 text + 3 visualization pages.
-
-**Page 1 — Text**
-- Dataset: personal gym log, 6 months, 12 muscles, 8 variables per session; data selfie framing
-- Design philosophy: Cairo's 5 qualities with specific app examples
-- Color system: 3-layer architecture, sequential warm scale rationale, data-ink applied to color
-- Honest limitation: RPE and RIR are subjective; single subject; no statistical inference possible
-
-**Page 2 — Spatial + temporal**
-- Screenshot of the landing page body heatmap (animated; show one week with visible contrast)
-- One muscle's calendar heatmap (Training Consistency)
-- Discussion: spatial encoding, sequential vs diverging scale choice, animation as a temporal dimension
-
-**Page 3 — Progression + relationship**
-- Weight progression line chart (one muscle, annotated with PR)
-- Scatter plot: volume vs RPE (once built)
-- Discussion: continuous vs discrete encoding, relational vs trend charts
-
-**Page 4 — Comparison across muscles**
-- Small multiples view (once built) or bump/rank chart
-- Discussion: small multiples vs multi-series chart, what cross-muscle comparison reveals
-
----
-
 ## Running the project
 
 ```bash
