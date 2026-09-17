@@ -1,7 +1,12 @@
 # Gym Data Viz - ITU Data Visualization Semester Project
 
 A personal data visualization web app tracking 6 months of gym training (October 2024 – March 2025).
-Built with React + Recharts. Submitted as part of the ITU Data Visualization course exam (deadline: 29 May).
+Built with React + Recharts. Submitted as part of the ITU Data Visualization course exam.
+
+<img width="1866" height="970" alt="image" src="https://github.com/user-attachments/assets/50200de7-41b1-466a-a2c9-2bdc294b5b3e" />
+
+<img width="1898" height="983" alt="image" src="https://github.com/user-attachments/assets/a39119d0-4295-4850-aee9-f0059d1a615f" />
+<img width="1286" height="945" alt="image" src="https://github.com/user-attachments/assets/c564c7dc-57a8-4802-b154-5d0cd5060171" />
 
 **Entry point:** Animated anatomy diagram → per-muscle dashboard
 
